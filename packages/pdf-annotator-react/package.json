@@ -27,7 +27,7 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/react-pdf-annotator.es.js"
     },
-    "./pdf-anntator.css": "./dist/pdf-annotator-react.css"
+    "./react-pdf-annotator.css": "./dist/react-pdf-annotator.css"
   },
   "devDependencies": {
     "@types/react-dom": "^18.0.11",

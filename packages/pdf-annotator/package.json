@@ -35,5 +35,8 @@
     "typescript": "^4.9.5",
     "vite": "^4.4.11",
     "vite-plugin-dts": "^3.6.0"
+  },
+  "dependencies": {
+    "pdfjs-dist": "^3.11.174"
   }
 }

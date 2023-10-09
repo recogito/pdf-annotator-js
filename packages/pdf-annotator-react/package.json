@@ -17,8 +17,7 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "main": "./dist/pdf-annotator-react.js",
-  "module": "./dist/pdf-annotator-react.es.js",
+  "module": "./dist/react-pdf-annotator.es.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"
@@ -26,8 +25,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/pdf-annotator-react.es.js",
-      "require": "./dist/pdf-annotator-react.js"
+      "import": "./dist/react-pdf-annotator.es.js"
     },
     "./pdf-anntator.css": "./dist/pdf-annotator-react.css"
   },

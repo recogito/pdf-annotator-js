@@ -17,7 +17,11 @@
 import * as pdfjsLib from 'pdfjs-dist';
 import * as pdfjsViewer from 'pdfjs-dist/web/pdf_viewer';
 
+import { initRecogito } from './initRecogito';
+
 import 'pdfjs-dist/web/pdf_viewer.css';
+
+import './index.css';
 
 // @ts-ignore
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.js', import.meta.url);
@@ -56,10 +60,8 @@ pdfLinkService.setViewer(pdfViewer);
 eventBus.on('pagesinit', () => {
   // We can use pdfViewer now, e.g. let's change default scale.
   pdfViewer.currentScaleValue = 'page-width';
-});
 
-eventBus.on('pagerendered', (evt: unknown) => {
-  console.log('page change', evt);
+  initRecogito(document.getElementById('viewer') as HTMLDivElement);
 });
 
 const loadingTask = pdfjsLib.getDocument({

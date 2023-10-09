@@ -1,0 +1,7 @@
+.r6o-highlight-layer.bg {
+  z-index:9998;
+}
+
+.r6o-highlight-layer.fg {
+  z-index:9999;
+}

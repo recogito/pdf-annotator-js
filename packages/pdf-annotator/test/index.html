@@ -9,7 +9,7 @@
         padding: 0;
       }
 
-      #viewer-container {
+      #app{
         overflow: auto;
         position: absolute;
         width: 100%;
@@ -19,10 +19,20 @@
   </head>
 
   <body>
-    <div id="viewer-container">
-      <div id="viewer" class="pdfViewer"></div>
-    </div>
+    <div id="app"></div>
+    
+    <script type="module">
+      import { createPDFAnnotator } from '../src/index.ts';
 
-    <script type="module" src="../src/index.ts"></script>
+      window.onload = async function() {
+        const container = document.getElementById('app');
+      
+        var anno = await createPDFAnnotator(container, 'compressed.tracemonkey-pldi-09.pdf');
+
+        anno.on('createAnnotation', a => console.log('create', a));
+        anno.on('deleteAnnotation', a => console.log('delete', a));
+        anno.on('updateAnnotation', (a, b) => console.log('update', a, b));
+      }
+    </script>
   </body>
 </html>

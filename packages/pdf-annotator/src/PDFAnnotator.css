@@ -1,3 +1,7 @@
+.r6o-annotatable .textLayer {
+  position: absolute;
+}
+
 .r6o-highlight-layer.bg {
   z-index:9998;
 }

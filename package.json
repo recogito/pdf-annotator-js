@@ -1,0 +1,19 @@
+{
+  "name": "@recogito/pdf-annotator-monorepo",
+  "version": "0.0.1-alpha",
+  "description": "Recogito PDF Annotator monorepo",
+  "author": "Rainer Simon",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/recogito/pdf-annotator-js.git"
+  },
+  "license": "BSD-3-Clause",
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces"
+  },
+  "workspaces": [
+    "./packages/pdf-annotator",
+    "./packages/pdf-annotator-react"
+  ]
+}

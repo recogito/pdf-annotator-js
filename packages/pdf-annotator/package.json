@@ -1,0 +1,39 @@
+{
+  "name": "@recogito/pdf-annotator",
+  "version": "0.0.1-alpha",
+  "description": "PDF annotation in the browser, using PDF.js and the Recogito Text Annotator",
+  "author": "Rainer Simon",
+  "license": "BSD-3-Clause",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/recogito/pdf-annotator-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/recogito/pdf-annotator-js/issues"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "main": "./dist/pdf-annotator.js",
+  "module": "./dist/pdf-annotator.es.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/pdf-annotator.es.js",
+      "require": "./dist/pdf-annotator.js"
+    },
+    "./pdf-anntator.css": "./dist/pdf-annotator.css"
+  },
+  "devDependencies": {
+    "typescript": "^4.9.5",
+    "vite": "^4.4.11",
+    "vite-plugin-dts": "^3.6.0"
+  }
+}

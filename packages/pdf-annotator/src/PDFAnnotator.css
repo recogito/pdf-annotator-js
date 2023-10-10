@@ -2,6 +2,10 @@
   position: absolute;
 }
 
+.r6o-annotatable.hovered .textLayer span {
+  cursor: pointer;
+}
+
 .r6o-highlight-layer.bg {
   z-index: 2;
 }

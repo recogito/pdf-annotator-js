@@ -18,6 +18,7 @@ import type { Annotator } from '@annotorious/core';
 import { TextAnnotation, TextAnnotator, TextAnnotatorOptions } from '@recogito/text-annotator';
 import * as pdfjsLib from 'pdfjs-dist';
 import * as pdfjsViewer from 'pdfjs-dist/web/pdf_viewer';
+import { addResizeObserver } from './responsive';
 
 import 'pdfjs-dist/web/pdf_viewer.css';
 
@@ -72,7 +73,7 @@ export const createPDFAnnotator = (
   pdfLinkService.setViewer(pdfViewer);
 
   eventBus.on('pagesinit', () => {
-    // We can use pdfViewer now, e.g. let's change default scale.
+    // 'auto' | 'page-fit' | 'page-actual' | 'page-width'
     pdfViewer.currentScaleValue = 'page-width';
 
     const anno = TextAnnotator(viewerContainer, opts);    
@@ -88,4 +89,7 @@ export const createPDFAnnotator = (
     pdfViewer.setDocument(pdfDocument);
     pdfLinkService.setDocument(pdfDocument);
   }).catch(error => reject(error));
+
+  addResizeObserver(container, () => pdfViewer.currentScaleValue = 'page-width');
+
 });

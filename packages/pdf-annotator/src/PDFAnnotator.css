@@ -3,9 +3,9 @@
 }
 
 .r6o-highlight-layer.bg {
-  z-index:9998;
+  z-index: 2;
 }
 
 .r6o-highlight-layer.fg {
-  z-index:9999;
+  z-index: 3;
 }

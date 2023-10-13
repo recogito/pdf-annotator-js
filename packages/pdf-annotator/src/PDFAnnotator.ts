@@ -148,7 +148,12 @@ export const createPDFAnnotator = (
     const _addAnnotation = store.addAnnotation;
     store.addAnnotation = (annotation: PDFAnnotation | TextAnnotation, origin = Origin.LOCAL) => {
       const revived = revive(annotation);
-      _addAnnotation(revived, origin);
+
+      const success = _addAnnotation(revived, origin);
+      if (!success)
+        unrendered = [...unrendered, annotation];
+
+      return success;
     }
 
     const _bulkAddAnnotation = store.bulkAddAnnotation;

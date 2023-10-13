@@ -65,7 +65,7 @@
         anno.on('deleteAnnotation', a => console.log('delete', a));
         anno.on('updateAnnotation', (a, b) => console.log('update', a));
 
-        // anno.loadAnnotations('annotations.json');
+        anno.loadAnnotations('annotations.json');
 
         document.getElementById('add-async').addEventListener('click', function() {
           anno.addAnnotation(annotationOnLastPage, 'REMOTE');

@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import type { Annotator } from '@annotorious/core';
-import { TextAnnotation, TextAnnotator, TextAnnotatorOptions } from '@recogito/text-annotator';
+import { Annotator, Origin, TextAnnotation, TextAnnotationStore, createTextAnnotator, TextAnnotatorOptions, TextAnnotator, TextAnnotationTarget } from '@recogito/text-annotator';
 import * as pdfjsLib from 'pdfjs-dist';
 import * as pdfjsViewer from 'pdfjs-dist/web/pdf_viewer';
 import { addResizeObserver } from './responsive';
+import type { PDFAnnotation, PDFAnnotationTarget } from './PDFAnnotation';
 
 import 'pdfjs-dist/web/pdf_viewer.css';
 
@@ -72,12 +72,93 @@ export const createPDFAnnotator = (
 
   pdfLinkService.setViewer(pdfViewer);
 
+  // Monkey-patch the anno store instance so we can support PDF.js 
+  // lazy page rendering
+  let unrendered: TextAnnotation[] = [];
+
+  let anno: TextAnnotator;
+
+  const toPDFTarget = (target: TextAnnotationTarget): PDFAnnotationTarget => {
+    const { offsetReference } = target.selector;
+
+    const pageNumber = parseInt(offsetReference.dataset.pageNumber);
+
+    return {
+      ...target,
+      selector: {
+        ...target.selector,
+        pageNumber 
+      }
+    };
+  }
+
+  const toPDF = (annotation: TextAnnotation): PDFAnnotation => {
+    const { target } = annotation;
+
+    return {
+      ...annotation,
+      target: toPDFTarget(target)
+    };
+  }
+
   eventBus.on('pagesinit', () => {
     // 'auto' | 'page-fit' | 'page-actual' | 'page-width'
     pdfViewer.currentScaleValue = 'page-width';
 
-    const anno = TextAnnotator(viewerContainer, opts);    
+    anno = createTextAnnotator(viewerContainer, {
+      ...opts,
+      offsetReferenceSelector: '.page'
+    }); 
+
+    const store = anno.state.store as TextAnnotationStore;
+
+    const _addAnnotation = store.addAnnotation;
+    store.addAnnotation = (annotation: TextAnnotation, origin = Origin.LOCAL) => {
+      const { selector } = annotation.target;
+      if ('pageSelector' in selector)
+        _addAnnotation(annotation, origin)
+      else
+        _addAnnotation(toPDF(annotation), origin);
+    }
+
+    const _bulkAddAnnotation = store.bulkAddAnnotation;
+    store.bulkAddAnnotation = (
+      annotations: PDFAnnotation[], 
+      replace: boolean,
+      origin = Origin.LOCAL
+    ) => {
+      // Revive offset reference
+      annotations.forEach(a => {
+        const { pageNumber } = a.target.selector;
+
+        const offsetReference: HTMLElement = document.querySelector(`.page[data-page-number="${pageNumber}"]`);
+        a.target.selector.offsetReference = offsetReference;
+      });
+
+      unrendered = _bulkAddAnnotation(annotations, replace, origin);
+      return unrendered;
+    }
+
+    const _updateAnnotation = store.updateAnnotation;
+    store.updateAnnotation = (annotation: PDFAnnotation | TextAnnotation, origin = Origin.LOCAL) =>
+      _updateAnnotation(toPDF(annotation), origin);
+  
+    const _updateTarget = store.updateTarget;
+    store.updateTarget = (target: PDFAnnotationTarget | TextAnnotationTarget, origin = Origin.LOCAL) => 
+      _updateTarget(toPDFTarget(target), origin);
+  });
+
+  // Listen to the first 'textlayerrendered' event
+  const onInit = () => {
     resolve(anno);
+    eventBus.off('textlayerrendered', onInit);
+  }
+
+  eventBus.on('textlayerrendered', onInit);  
+
+  eventBus.on('textlayerrendered', (evt: any) => {
+    if (unrendered.length > 0)
+      anno.state.store.bulkAddAnnotation(unrendered, false, Origin.REMOTE);
   });
 
   pdfjsLib.getDocument({
@@ -91,5 +172,4 @@ export const createPDFAnnotator = (
   }).catch(error => reject(error));
 
   addResizeObserver(container, () => pdfViewer.currentScaleValue = 'page-width');
-
 });

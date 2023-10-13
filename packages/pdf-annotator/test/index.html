@@ -31,7 +31,9 @@
 
         anno.on('createAnnotation', a => console.log('create', a));
         anno.on('deleteAnnotation', a => console.log('delete', a));
-        anno.on('updateAnnotation', (a, b) => console.log('update', a, b));
+        anno.on('updateAnnotation', (a, b) => console.log('update', a));
+
+        anno.loadAnnotations('annotations.json');
       }
     </script>
   </body>

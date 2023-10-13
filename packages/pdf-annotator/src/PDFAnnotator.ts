@@ -14,7 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Annotator, Origin, TextAnnotation, TextAnnotationStore, createTextAnnotator, TextAnnotatorOptions, TextAnnotator, TextAnnotationTarget } from '@recogito/text-annotator';
+import { 
+  Annotator, 
+  Origin, 
+  TextAnnotation, 
+  TextAnnotationStore, 
+  TextAnnotatorOptions, 
+  TextAnnotator, 
+  TextAnnotationTarget,
+  createTextAnnotator } from '@recogito/text-annotator';
 import * as pdfjsLib from 'pdfjs-dist';
 import * as pdfjsViewer from 'pdfjs-dist/web/pdf_viewer';
 import { addResizeObserver } from './responsive';

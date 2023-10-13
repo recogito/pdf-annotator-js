@@ -120,8 +120,13 @@ export const createPDFAnnotator = (
 
     const store = anno.state.store as TextAnnotationStore;
 
-    const revive = (a: PDFAnnotation | TextAnnotation): PDFAnnotation => {
-      const { selector } = a.target;
+    const revive = (a: PDFAnnotation | TextAnnotation): PDFAnnotation => ({
+      ...a,
+      target: reviveTarget(a.target)
+    });
+
+    const reviveTarget = (target: PDFAnnotationTarget | TextAnnotationTarget): PDFAnnotationTarget => {
+      const { selector } = target;
 
       const hasValidOffsetReference = 
         'offsetReference' in selector && 
@@ -129,10 +134,10 @@ export const createPDFAnnotator = (
 
       if (hasValidOffsetReference) {
         if ('pageNumber' in selector) {
-          // Already a PDF annotation - doesn't need reviving
-          return a as PDFAnnotation;
+          // Already a PDF annotation target - doesn't need reviving
+          return target as PDFAnnotationTarget;
         } else {
-          return toPDF(a);
+          return toPDFTarget(target);
         }
       } else if ('pageNumber' in selector) {
         const { pageNumber } = selector;
@@ -140,19 +145,16 @@ export const createPDFAnnotator = (
         const offsetReference: HTMLElement = document.querySelector(`.page[data-page-number="${pageNumber}"]`);
   
         return {
-          ...a,
-          target: {
-            ...a.target,
-            selector: {
-              ...a.target.selector,
-              offsetReference
-            } as PDFSelector
-          }
+          ...target,
+          selector: {
+            ...target.selector,
+            offsetReference
+          } as PDFSelector
         };
       } else { 
         // Has neither offsetReference - shouldn't happen
-        console.warn('Invalid PDF annotation', a);
-        return a as PDFAnnotation;
+        console.warn('Invalid PDF annotation target', target);
+        return target as PDFAnnotationTarget;
       }
     }
 
@@ -180,11 +182,11 @@ export const createPDFAnnotator = (
 
     const _updateAnnotation = store.updateAnnotation;
     store.updateAnnotation = (annotation: PDFAnnotation | TextAnnotation, origin = Origin.LOCAL) =>
-      _updateAnnotation(toPDF(annotation), origin);
+      _updateAnnotation(revive(annotation), origin);
   
     const _updateTarget = store.updateTarget;
     store.updateTarget = (target: PDFAnnotationTarget | TextAnnotationTarget, origin = Origin.LOCAL) => 
-      _updateTarget(toPDFTarget(target), origin);
+      _updateTarget(reviveTarget(target), origin);
   });
 
   // Listen to the first 'textlayerrendered' event

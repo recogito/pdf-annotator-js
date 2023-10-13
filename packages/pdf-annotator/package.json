@@ -1,6 +1,6 @@
 {
   "name": "@recogito/pdf-annotator",
-  "version": "0.0.1-alpha",
+  "version": "0.0.1-alpha-02",
   "description": "PDF annotation in the browser, using PDF.js and the Recogito Text Annotator",
   "author": "Rainer Simon",
   "license": "BSD-3-Clause",

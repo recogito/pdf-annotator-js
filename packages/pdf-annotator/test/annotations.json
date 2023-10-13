@@ -40,26 +40,6 @@
     }
   },
   {
-    "id": "0611d9e8-4d21-4048-9529-4dcc2ba4a174",
-    "bodies": [],
-    "target": {
-      "annotation": "0611d9e8-4d21-4048-9529-4dcc2ba4a174",
-      "selector": {
-        "quote": "Work is underway in a number of areas to further improve theperformance of our trace-based JavaScript compiler. We currentlydo not trace across recursive function calls, but plan to add thesupport for this capability in the near term. We are also exploringadoption of the existing work on tree recompilation in the contextof the presented dynamic compiler in order to minimize JIT pausetimes and obtain the best of both worlds, fast tree stitching as wellas the improved code quality due to tree recompilation.",
-        "start": 5001,
-        "end": 5511,
-        "range": {},
-        "offsetReference": {},
-        "pageNumber": 13
-      },
-      "creator": {
-        "isGuest": true,
-        "id": "nuPGkgB78UAqgmyUysJ1"
-      },
-      "created": "2023-10-13T07:45:42.530Z"
-    }
-  },
-  {
     "id": "307dfdc5-4039-46a7-98f1-e7ccb40fc097",
     "bodies": [],
     "target": {

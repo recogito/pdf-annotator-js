@@ -18,7 +18,7 @@ import { Annotator, Origin, TextAnnotation, TextAnnotationStore, createTextAnnot
 import * as pdfjsLib from 'pdfjs-dist';
 import * as pdfjsViewer from 'pdfjs-dist/web/pdf_viewer';
 import { addResizeObserver } from './responsive';
-import type { PDFAnnotation, PDFAnnotationTarget } from './PDFAnnotation';
+import type { PDFAnnotation, PDFAnnotationTarget, PDFSelector } from './PDFAnnotation';
 
 import 'pdfjs-dist/web/pdf_viewer.css';
 
@@ -112,13 +112,43 @@ export const createPDFAnnotator = (
 
     const store = anno.state.store as TextAnnotationStore;
 
+    const revive = (a: PDFAnnotation | TextAnnotation): PDFAnnotation => {
+      const { selector } = a.target;
+
+      const hasValidOffsetReference = 
+        'offsetReference' in selector && 
+        selector.offsetReference instanceof HTMLElement;
+
+      if (hasValidOffsetReference) {
+        // Already a PDF annotation - doesn't need reviving
+        return a as PDFAnnotation;
+      } else if ('pageNumber' in selector) {
+
+        const { pageNumber } = selector;
+
+        const offsetReference: HTMLElement = document.querySelector(`.page[data-page-number="${pageNumber}"]`);
+  
+        return {
+          ...a,
+          target: {
+            ...a.target,
+            selector: {
+              ...a.target.selector,
+              offsetReference
+            } as PDFSelector
+          }
+        };
+      } else { 
+        // Has neither offsetReference - shouldn't happen
+        console.warn('Invalid PDF annotation', a);
+        return a as PDFAnnotation;
+      }
+    }
+
     const _addAnnotation = store.addAnnotation;
-    store.addAnnotation = (annotation: TextAnnotation, origin = Origin.LOCAL) => {
-      const { selector } = annotation.target;
-      if ('pageSelector' in selector)
-        _addAnnotation(annotation, origin)
-      else
-        _addAnnotation(toPDF(annotation), origin);
+    store.addAnnotation = (annotation: PDFAnnotation | TextAnnotation, origin = Origin.LOCAL) => {
+      const revived = revive(annotation);
+      _addAnnotation(revived, origin);
     }
 
     const _bulkAddAnnotation = store.bulkAddAnnotation;
@@ -127,15 +157,8 @@ export const createPDFAnnotator = (
       replace: boolean,
       origin = Origin.LOCAL
     ) => {
-      // Revive offset reference
-      annotations.forEach(a => {
-        const { pageNumber } = a.target.selector;
-
-        const offsetReference: HTMLElement = document.querySelector(`.page[data-page-number="${pageNumber}"]`);
-        a.target.selector.offsetReference = offsetReference;
-      });
-
-      unrendered = _bulkAddAnnotation(annotations, replace, origin);
+      const revived = annotations.map(revive);
+      unrendered = _bulkAddAnnotation(revived, replace, origin);
       return unrendered;
     }
 

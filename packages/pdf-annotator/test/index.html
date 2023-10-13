@@ -15,13 +15,45 @@
         width: 100%;
         height: 100%;
       }
+
+      #add-async {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 9999;
+      }
     </style>
   </head>
 
   <body>
+    <button id="add-async">
+      Add Async!
+    </button>
+
     <div id="app"></div>
     
     <script type="module">
+      const annotationOnLastPage = {
+        "id": "0611d9e8-4d21-4048-9529-4dcc2ba4a174",
+        "bodies": [],
+        "target": {
+          "annotation": "0611d9e8-4d21-4048-9529-4dcc2ba4a174",
+          "selector": {
+            "quote": "Work is underway in a number of areas to further improve theperformance of our trace-based JavaScript compiler. We currentlydo not trace across recursive function calls, but plan to add thesupport for this capability in the near term. We are also exploringadoption of the existing work on tree recompilation in the contextof the presented dynamic compiler in order to minimize JIT pausetimes and obtain the best of both worlds, fast tree stitching as wellas the improved code quality due to tree recompilation.",
+            "start": 5001,
+            "end": 5511,
+            "range": {},
+            "offsetReference": {},
+            "pageNumber": 13
+          },
+          "creator": {
+            "isGuest": true,
+            "id": "nuPGkgB78UAqgmyUysJ1"
+          },
+          "created": "2023-10-13T07:45:42.530Z"
+        }
+      };
+
       import { createPDFAnnotator } from '../src/index.ts';
 
       window.onload = async function() {
@@ -33,7 +65,11 @@
         anno.on('deleteAnnotation', a => console.log('delete', a));
         anno.on('updateAnnotation', (a, b) => console.log('update', a));
 
-        anno.loadAnnotations('annotations.json');
+        // anno.loadAnnotations('annotations.json');
+
+        document.getElementById('add-async').addEventListener('click', function() {
+          anno.addAnnotation(annotationOnLastPage, 'REMOTE');
+        });
       }
     </script>
   </body>

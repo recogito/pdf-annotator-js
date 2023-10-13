@@ -128,10 +128,13 @@ export const createPDFAnnotator = (
         selector.offsetReference instanceof HTMLElement;
 
       if (hasValidOffsetReference) {
-        // Already a PDF annotation - doesn't need reviving
-        return a as PDFAnnotation;
+        if ('pageNumber' in selector) {
+          // Already a PDF annotation - doesn't need reviving
+          return a as PDFAnnotation;
+        } else {
+          return toPDF(a);
+        }
       } else if ('pageNumber' in selector) {
-
         const { pageNumber } = selector;
 
         const offsetReference: HTMLElement = document.querySelector(`.page[data-page-number="${pageNumber}"]`);

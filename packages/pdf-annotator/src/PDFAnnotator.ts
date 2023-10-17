@@ -47,7 +47,7 @@ export interface PDFAnnotator<E extends unknown = TextAnnotation> extends Annota
 
   currentScaleValue: string | undefined;
 
-  setSize(scale: PDFScale | number): number;
+  setScale(scale: PDFScale | number): number;
 
   zoomIn(percentage?: number): number;
 
@@ -94,7 +94,7 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
 
   let anno: TextAnnotator<E>;
 
-  const setSize = (size: PDFScale | number) => { 
+  const setScale = (size: PDFScale | number) => { 
     if (typeof size === 'number')
       pdfViewer.currentScale = size;
     else
@@ -216,7 +216,7 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
       ...anno,
       get currentScale() { return pdfViewer.currentScale },
       get currentScaleValue() { return pdfViewer.currentScaleValue },
-      setSize,
+      setScale,
       zoomIn,
       zoomOut
     } as PDFAnnotator<E>);

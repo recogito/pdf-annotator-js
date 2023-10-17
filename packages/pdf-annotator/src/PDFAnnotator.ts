@@ -226,8 +226,13 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
   eventBus.on('textlayerrendered', onInit);  
 
   eventBus.on('textlayerrendered', () => {
-    if (unrendered.length > 0)
-      anno.state.store.bulkAddAnnotation(unrendered, false, Origin.REMOTE);
+    if (unrendered.length > 0) {
+      // Hack - remove the unrendered annotations from the store, and the
+      // attempt to re-add
+      const { store } = anno.state;
+      store.bulkDeleteAnnotation(unrendered);
+      store.bulkAddAnnotation(unrendered, false, Origin.REMOTE);
+    }
   });
 
   pdfjsLib.getDocument({

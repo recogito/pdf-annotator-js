@@ -26,7 +26,7 @@
   </head>
 
   <body>
-    <div className="buttons">
+    <div class="buttons">
       <button id="size-auto">
         Auto
       </button>
@@ -49,6 +49,10 @@
 
       <button id="size-zoom-out">
         -
+      </button>
+
+      <button id="jump">
+        Jump to annotation
       </button>
     </div>
 
@@ -87,7 +91,11 @@
         anno.on('deleteAnnotation', a => console.log('delete', a));
         anno.on('updateAnnotation', (a, b) => console.log('update', a));
 
-        anno.loadAnnotations('annotations.json');
+        let annotations;
+
+        anno.loadAnnotations('annotations.json').then(a => { 
+          annotations = a;
+        });
 
         document.getElementById('size-auto')
           .addEventListener('click', () => anno.setSize('auto'));
@@ -106,6 +114,16 @@
         
         document.getElementById('size-zoom-out')
           .addEventListener('click', () => console.log(anno.zoomOut()));
+
+        let idx = 0;
+
+        document.getElementById('jump')
+          .addEventListener('click', () => {
+            const next = annotations[idx];
+            idx = (idx + 1) % annotations.length;
+
+            anno.scrollIntoView(next);
+          });
       }
     </script>
   </body>

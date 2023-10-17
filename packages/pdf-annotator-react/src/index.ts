@@ -4,5 +4,6 @@ export * from './PDFAnnotator';
 export type {
   PDFAnnotation,
   PDFAnnotationTarget,
-  PDFSelector
+  PDFSelector,
+  PDFSize
 } from '@recogito/pdf-annotator';

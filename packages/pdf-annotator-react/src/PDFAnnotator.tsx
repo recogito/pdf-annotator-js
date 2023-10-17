@@ -7,7 +7,7 @@ import '@recogito/pdf-annotator/pdf-anntator.css';
 import './PDFAnnotator.css';
 import { PDFSize } from '@recogito/pdf-annotator/dist/src/PDFSize';
 
-export type PDFAnnotatorProps = TextAnnotatorOptions & {
+export type PDFAnnotatorProps<E extends unknown> = TextAnnotatorOptions<E> & {
 
   children?: ReactNode;
 
@@ -19,7 +19,7 @@ export type PDFAnnotatorProps = TextAnnotatorOptions & {
 
 }
 
-export const PDFAnnotator = (props: PDFAnnotatorProps) => {
+export const PDFAnnotator = <E extends unknown>(props: PDFAnnotatorProps<E>) => {
 
   const { children, formatter, pdfUrl, ...opts } = props;
 

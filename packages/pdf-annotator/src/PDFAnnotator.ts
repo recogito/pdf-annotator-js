@@ -42,7 +42,7 @@ const CMAP_PACKED = true;
 
 const ENABLE_XFA = true;
 
-export interface PDFAnnotator<T extends unknown = TextAnnotation> extends Annotator<TextAnnotation, T> {
+export interface PDFAnnotator<E extends unknown = TextAnnotation> extends Annotator<TextAnnotation, E> {
 
   setSize(size: PDFSize | number): void;
 
@@ -52,10 +52,10 @@ export interface PDFAnnotator<T extends unknown = TextAnnotation> extends Annota
 
 }
 
-export const createPDFAnnotator = (
+export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
   container: HTMLDivElement, 
   pdfURL: string,
-  opts: TextAnnotatorOptions
+  opts: TextAnnotatorOptions<E>
 ): Promise<PDFAnnotator> => new Promise((resolve, reject) => {
   // Container needs a DIV child - cf. https://github.com/mozilla/pdf.js/blob/master/examples/components/simpleviewer.html
   const viewerContainer = document.createElement('div');
@@ -89,7 +89,7 @@ export const createPDFAnnotator = (
   // lazy page rendering
   let unrendered: TextAnnotation[] = [];
 
-  let anno: TextAnnotator;
+  let anno: TextAnnotator<E>;
 
   const setSize = (size: PDFSize | number) => { 
     if (typeof size === 'number')
@@ -210,7 +210,7 @@ export const createPDFAnnotator = (
       setSize,
       zoomIn,
       zoomOut
-    });
+    } as PDFAnnotator<E>);
 
     eventBus.off('textlayerrendered', onInit);
   }

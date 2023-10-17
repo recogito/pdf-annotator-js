@@ -130,7 +130,8 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
   }
 
   eventBus.on('pagesinit', () => {
-    pdfViewer.currentScaleValue = 'page-width';
+    // Default to scale = auto
+    pdfViewer.currentScaleValue = 'auto';
 
     anno = createTextAnnotator(viewerContainer, {
       ...opts,
@@ -208,8 +209,6 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
       _updateTarget(reviveTarget(target), origin);
   });
 
-  const foo = pdfViewer.currentScale;
-
   // Listen to the first 'textlayerrendered' event
   const onInit = () => {
     resolve({
@@ -226,7 +225,7 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
 
   eventBus.on('textlayerrendered', onInit);  
 
-  eventBus.on('textlayerrendered', (evt: any) => {
+  eventBus.on('textlayerrendered', () => {
     if (unrendered.length > 0)
       anno.state.store.bulkAddAnnotation(unrendered, false, Origin.REMOTE);
   });

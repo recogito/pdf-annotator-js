@@ -91,8 +91,12 @@ export const createPDFAnnotator = (
 
   let anno: TextAnnotator;
 
-  const setSize = (size: PDFSize) => 
-    pdfViewer.currentScaleValue = size;
+  const setSize = (size: PDFSize | number) => { 
+    if (typeof size === 'number')
+      pdfViewer.currentScale = size;
+    else
+      pdfViewer.currentScaleValue = size;  
+  }
 
   const zoomIn = (percentage?: number) => {
     const factor = pdfViewer.currentScale + (percentage || 10) / 100;

@@ -1,10 +1,11 @@
 import { ReactNode, useContext, useEffect, useRef } from 'react';
 import { AnnotoriousContext, Formatter } from '@annotorious/react';
 import { TextAnnotatorOptions } from '@recogito/text-annotator';
-import { createPDFAnnotator } from '@recogito/pdf-annotator';
+import { createPDFAnnotator, PDFAnnotator as RecogitoPDFAnnotator } from '@recogito/pdf-annotator';
 
 import '@recogito/pdf-annotator/pdf-anntator.css';
 import './PDFAnnotator.css';
+import { PDFSize } from '@recogito/pdf-annotator/dist/src/PDFSize';
 
 export type PDFAnnotatorProps = TextAnnotatorOptions & {
 
@@ -13,6 +14,8 @@ export type PDFAnnotatorProps = TextAnnotatorOptions & {
   formatter?: Formatter;
 
   pdfUrl: string;
+
+  pageSize: PDFSize | number;
 
 }
 
@@ -31,6 +34,10 @@ export const PDFAnnotator = (props: PDFAnnotatorProps) => {
         setAnno(anno);
       });
   }, []);
+
+  useEffect(() => {
+    (anno as RecogitoPDFAnnotator).setSize(props.pageSize);
+  }, [props.pageSize])
 
   useEffect(() => {
     if (!anno)

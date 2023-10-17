@@ -36,7 +36,8 @@ export const PDFAnnotator = (props: PDFAnnotatorProps) => {
   }, []);
 
   useEffect(() => {
-    (anno as RecogitoPDFAnnotator).setSize(props.pageSize);
+    if (props.pageSize && anno)
+      (anno as RecogitoPDFAnnotator).setSize(props.pageSize);
   }, [props.pageSize])
 
   useEffect(() => {

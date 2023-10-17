@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 import { 
-  Annotator, 
   Origin, 
   TextAnnotation, 
   TextAnnotationStore, 
@@ -41,7 +40,7 @@ const CMAP_PACKED = true;
 
 const ENABLE_XFA = true;
 
-export interface PDFAnnotator<E extends unknown = TextAnnotation> extends Annotator<TextAnnotation, E> {
+export interface PDFAnnotator<E extends unknown = TextAnnotation> extends TextAnnotator<E> {
 
   currentScale: number;
 

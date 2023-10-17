@@ -32,6 +32,7 @@ import 'pdfjs-dist/web/pdf_viewer.css';
 
 import '@recogito/text-annotator/dist/text-annotator.css';
 import './PDFAnnotator.css';
+import type { PDFSize } from './PDFSize';
 
 // @ts-ignore
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.js', import.meta.url);
@@ -43,7 +44,11 @@ const ENABLE_XFA = true;
 
 export interface PDFAnnotator<T extends unknown = TextAnnotation> extends Annotator<TextAnnotation, T> {
 
-  // For future use
+  setSize(size: PDFSize | number): void;
+
+  zoomIn(percentage?: number): number;
+
+  zoomOut(percentag?: number): number;
 
 }
 
@@ -86,6 +91,21 @@ export const createPDFAnnotator = (
 
   let anno: TextAnnotator;
 
+  const setSize = (size: PDFSize) => 
+    pdfViewer.currentScaleValue = size;
+
+  const zoomIn = (percentage?: number) => {
+    const factor = pdfViewer.currentScale + (percentage || 10) / 100;
+    pdfViewer.currentScale = Math.min(50, factor);
+    return pdfViewer.currentScale;
+  }
+
+  const zoomOut = (percentage?: number) => {
+    const factor = pdfViewer.currentScale - (percentage || 10) / 100;
+    pdfViewer.currentScale = factor;
+    return pdfViewer.currentScale;
+  }
+
   const toPDFTarget = (target: TextAnnotationTarget): PDFAnnotationTarget => {
     const { offsetReference } = target.selector;
 
@@ -100,17 +120,7 @@ export const createPDFAnnotator = (
     };
   }
 
-  const toPDF = (annotation: TextAnnotation): PDFAnnotation => {
-    const { target } = annotation;
-
-    return {
-      ...annotation,
-      target: toPDFTarget(target)
-    };
-  }
-
   eventBus.on('pagesinit', () => {
-    // 'auto' | 'page-fit' | 'page-actual' | 'page-width'
     pdfViewer.currentScaleValue = 'page-width';
 
     anno = createTextAnnotator(viewerContainer, {
@@ -191,7 +201,13 @@ export const createPDFAnnotator = (
 
   // Listen to the first 'textlayerrendered' event
   const onInit = () => {
-    resolve(anno);
+    resolve({
+      ...anno,
+      setSize,
+      zoomIn,
+      zoomOut
+    });
+
     eventBus.off('textlayerrendered', onInit);
   }
 
@@ -212,5 +228,17 @@ export const createPDFAnnotator = (
     pdfLinkService.setDocument(pdfDocument);
   }).catch(error => reject(error));
 
-  addResizeObserver(container, () => pdfViewer.currentScaleValue = 'page-width');
+  addResizeObserver(container, () => {
+    const { currentScaleValue } = pdfViewer;
+    if (
+      currentScaleValue === 'auto' ||
+      currentScaleValue === 'page-fit' ||
+      currentScaleValue === 'page-width'
+    ) {
+      // Refresh size
+      pdfViewer.currentScaleValue = currentScaleValue;
+    }
+
+    pdfViewer.update();
+  });
 });

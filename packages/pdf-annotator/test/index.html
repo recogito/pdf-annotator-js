@@ -16,7 +16,7 @@
         height: 100%;
       }
 
-      #add-async {
+      .buttons {
         position: absolute;
         top: 10px;
         left: 10px;
@@ -26,9 +26,31 @@
   </head>
 
   <body>
-    <button id="add-async">
-      Add Async!
-    </button>
+    <div className="buttons">
+      <button id="size-auto">
+        Auto
+      </button>
+
+      <button id="size-page-fit">
+        Fit Page
+      </button>
+
+      <button id="size-page-width">
+        Fit Width
+      </button>
+
+      <button id="size-page-actual">
+        Original
+      </button>
+
+      <button id="size-zoom-in">
+        +
+      </button>
+
+      <button id="size-zoom-out">
+        -
+      </button>
+    </div>
 
     <div id="app"></div>
     
@@ -67,9 +89,23 @@
 
         anno.loadAnnotations('annotations.json');
 
-        document.getElementById('add-async').addEventListener('click', function() {
-          anno.addAnnotation(annotationOnLastPage, 'REMOTE');
-        });
+        document.getElementById('size-auto')
+          .addEventListener('click', () => anno.setSize('auto'));
+
+        document.getElementById('size-page-fit')
+          .addEventListener('click', () => anno.setSize('page-fit'));
+
+        document.getElementById('size-page-width')
+          .addEventListener('click', () => anno.setSize('page-width'));
+
+        document.getElementById('size-page-actual')
+          .addEventListener('click', () => anno.setSize('page-actual'));
+
+        document.getElementById('size-zoom-in')
+          .addEventListener('click', () => console.log(anno.zoomIn()));
+        
+        document.getElementById('size-zoom-out')
+          .addEventListener('click', () => console.log(anno.zoomOut()));
       }
     </script>
   </body>

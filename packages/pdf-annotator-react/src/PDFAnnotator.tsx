@@ -9,7 +9,7 @@ import { PDFSize } from '@recogito/pdf-annotator/dist/src/PDFSize';
 
 export type PDFAnnotatorProps<E extends unknown> = TextAnnotatorOptions<E> & {
 
-  children?: ReactNode;
+  children?: ReactNode | JSX.Element;
 
   formatter?: Formatter;
 

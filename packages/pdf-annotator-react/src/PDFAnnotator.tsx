@@ -36,7 +36,7 @@ export const PDFAnnotator = <E extends unknown>(props: PDFAnnotatorProps<E>) => 
 
   useEffect(() => {
     if (props.pageSize && anno)
-      (anno as VanillaPDFAnnotator).setSize(props.pageSize);
+      (anno as VanillaPDFAnnotator).setScale(props.pageSize);
   }, [props.pageSize])
 
   useEffect(() => {

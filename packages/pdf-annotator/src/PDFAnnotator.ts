@@ -56,7 +56,7 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
   container: HTMLDivElement, 
   pdfURL: string,
   opts: TextAnnotatorOptions<E>
-): Promise<PDFAnnotator> => new Promise((resolve, reject) => {
+): Promise<PDFAnnotator<E>> => new Promise((resolve, reject) => {
   // Container needs a DIV child - cf. https://github.com/mozilla/pdf.js/blob/master/examples/components/simpleviewer.html
   const viewerContainer = document.createElement('div');
   viewerContainer.className = 'pdfViewer';

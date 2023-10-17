@@ -15,7 +15,7 @@ export type PDFAnnotatorProps<E extends unknown> = TextAnnotatorOptions<E> & {
 
   pdfUrl: string;
 
-  pageSize: PDFSize | number;
+  pageSize?: PDFSize | number;
 
 }
 

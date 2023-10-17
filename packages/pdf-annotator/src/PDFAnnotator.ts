@@ -44,6 +44,10 @@ const ENABLE_XFA = true;
 
 export interface PDFAnnotator<E extends unknown = TextAnnotation> extends Annotator<TextAnnotation, E> {
 
+  currentScale: number;
+
+  currentScaleValue: string | undefined;
+
   setSize(size: PDFSize | number): void;
 
   zoomIn(percentage?: number): number;
@@ -203,10 +207,14 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
       _updateTarget(reviveTarget(target), origin);
   });
 
+  const foo = pdfViewer.currentScale;
+
   // Listen to the first 'textlayerrendered' event
   const onInit = () => {
     resolve({
       ...anno,
+      get currentScale() { return pdfViewer.currentScale },
+      get currentScaleValue() { return pdfViewer.currentScaleValue },
       setSize,
       zoomIn,
       zoomOut

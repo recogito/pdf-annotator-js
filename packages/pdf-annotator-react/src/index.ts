@@ -6,5 +6,5 @@ export type {
   PDFAnnotationTarget,
   PDFAnnotator as VanillaPDFAnnotator,
   PDFSelector,
-  PDFSize
+  PDFScale
 } from '@recogito/pdf-annotator';

@@ -27,12 +27,11 @@ import * as pdfjsLib from 'pdfjs-dist';
 import * as pdfjsViewer from 'pdfjs-dist/web/pdf_viewer';
 import { addResizeObserver } from './responsive';
 import type { PDFAnnotation, PDFAnnotationTarget, PDFSelector } from './PDFAnnotation';
+import type { PDFScale } from './PDFScale';
 
 import 'pdfjs-dist/web/pdf_viewer.css';
-
 import '@recogito/text-annotator/dist/text-annotator.css';
 import './PDFAnnotator.css';
-import type { PDFSize } from './PDFSize';
 
 // @ts-ignore
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.js', import.meta.url);
@@ -48,7 +47,7 @@ export interface PDFAnnotator<E extends unknown = TextAnnotation> extends Annota
 
   currentScaleValue: string | undefined;
 
-  setSize(size: PDFSize | number): void;
+  setSize(scale: PDFScale | number): number;
 
   zoomIn(percentage?: number): number;
 
@@ -95,11 +94,13 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
 
   let anno: TextAnnotator<E>;
 
-  const setSize = (size: PDFSize | number) => { 
+  const setSize = (size: PDFScale | number) => { 
     if (typeof size === 'number')
       pdfViewer.currentScale = size;
     else
       pdfViewer.currentScaleValue = size;  
+
+    return pdfViewer.currentScale;
   }
 
   const zoomIn = (percentage?: number) => {

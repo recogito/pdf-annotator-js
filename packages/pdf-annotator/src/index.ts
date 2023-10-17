@@ -1,4 +1,4 @@
 export * from './PDFAnnotation';
 export * from './PDFAnnotator';
-export * from './PDFSize';
+export * from './PDFScale';
 

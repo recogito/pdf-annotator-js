@@ -27,6 +27,7 @@ import * as pdfjsViewer from 'pdfjs-dist/web/pdf_viewer';
 import { addResizeObserver } from './responsive';
 import type { PDFAnnotation, PDFAnnotationTarget, PDFSelector } from './PDFAnnotation';
 import type { PDFScale } from './PDFScale';
+import { createPDFStore } from './state';
 
 import 'pdfjs-dist/web/pdf_viewer.css';
 import '@recogito/text-annotator/dist/text-annotator.css';
@@ -59,7 +60,8 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
   pdfURL: string,
   opts: TextAnnotatorOptions<E>
 ): Promise<PDFAnnotator<E>> => new Promise((resolve, reject) => {
-  // Container needs a DIV child - cf. https://github.com/mozilla/pdf.js/blob/master/examples/components/simpleviewer.html
+  // Container needs a DIV child - cf:
+  // https://github.com/mozilla/pdf.js/blob/master/examples/components/simpleviewer.html
   const viewerContainer = document.createElement('div');
   viewerContainer.className = 'pdfViewer';
 
@@ -87,12 +89,6 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
 
   pdfLinkService.setViewer(pdfViewer);
 
-  // Monkey-patch the anno store instance so we can support PDF.js 
-  // lazy page rendering
-  let unrendered: TextAnnotation[] = [];
-
-  let anno: TextAnnotator<E>;
-
   const setScale = (size: PDFScale | number) => { 
     if (typeof size === 'number')
       pdfViewer.currentScale = size;
@@ -114,124 +110,35 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
     return pdfViewer.currentScale;
   }
 
-  const toPDFTarget = (target: TextAnnotationTarget): PDFAnnotationTarget => {
-    const { offsetReference } = target.selector;
-
-    const pageNumber = parseInt(offsetReference.dataset.pageNumber);
-
-    return {
-      ...target,
-      selector: {
-        ...target.selector,
-        pageNumber 
-      }
-    };
-  }
-
   eventBus.on('pagesinit', () => {
     // Default to scale = auto
     pdfViewer.currentScaleValue = 'auto';
 
-    anno = createTextAnnotator(viewerContainer, {
+    const anno = createTextAnnotator(viewerContainer, {
       ...opts,
       offsetReferenceSelector: '.page'
     }); 
 
-    const store = anno.state.store as TextAnnotationStore;
+    const store = createPDFStore(anno.state.store as TextAnnotationStore);
 
-    const revive = (a: PDFAnnotation | TextAnnotation): PDFAnnotation => ({
-      ...a,
-      target: reviveTarget(a.target)
-    });
+    // Listen to the first 'textlayerrendered' event (once)
+    const onInit = () => {
+      resolve({
+        ...anno,
+        get currentScale() { return pdfViewer.currentScale },
+        get currentScaleValue() { return pdfViewer.currentScaleValue },
+        setScale,
+        zoomIn,
+        zoomOut
+      } as PDFAnnotator<E>);
 
-    const reviveTarget = (target: PDFAnnotationTarget | TextAnnotationTarget): PDFAnnotationTarget => {
-      const { selector } = target;
-
-      const hasValidOffsetReference = 
-        'offsetReference' in selector && 
-        selector.offsetReference instanceof HTMLElement;
-
-      if (hasValidOffsetReference) {
-        if ('pageNumber' in selector) {
-          // Already a PDF annotation target - doesn't need reviving
-          return target as PDFAnnotationTarget;
-        } else {
-          return toPDFTarget(target);
-        }
-      } else if ('pageNumber' in selector) {
-        const { pageNumber } = selector;
-
-        const offsetReference: HTMLElement = document.querySelector(`.page[data-page-number="${pageNumber}"]`);
-  
-        return {
-          ...target,
-          selector: {
-            ...target.selector,
-            offsetReference
-          } as PDFSelector
-        };
-      } else { 
-        // Has neither offsetReference - shouldn't happen
-        console.warn('Invalid PDF annotation target', target);
-        return target as PDFAnnotationTarget;
-      }
+      eventBus.off('textlayerrendered', onInit);
     }
 
-    const _addAnnotation = store.addAnnotation;
-    store.addAnnotation = (annotation: PDFAnnotation | TextAnnotation, origin = Origin.LOCAL) => {
-      const revived = revive(annotation);
+    eventBus.on('textlayerrendered', onInit);  
 
-      const success = _addAnnotation(revived, origin);
-      if (!success)
-        unrendered = [...unrendered, annotation];
-
-      return success;
-    }
-
-    const _bulkAddAnnotation = store.bulkAddAnnotation;
-    store.bulkAddAnnotation = (
-      annotations: PDFAnnotation[], 
-      replace: boolean,
-      origin = Origin.LOCAL
-    ) => {
-      const revived = annotations.map(revive);
-      unrendered = _bulkAddAnnotation(revived, replace, origin);
-      return unrendered;
-    }
-
-    const _updateAnnotation = store.updateAnnotation;
-    store.updateAnnotation = (annotation: PDFAnnotation | TextAnnotation, origin = Origin.LOCAL) =>
-      _updateAnnotation(revive(annotation), origin);
-  
-    const _updateTarget = store.updateTarget;
-    store.updateTarget = (target: PDFAnnotationTarget | TextAnnotationTarget, origin = Origin.LOCAL) => 
-      _updateTarget(reviveTarget(target), origin);
-  });
-
-  // Listen to the first 'textlayerrendered' event
-  const onInit = () => {
-    resolve({
-      ...anno,
-      get currentScale() { return pdfViewer.currentScale },
-      get currentScaleValue() { return pdfViewer.currentScaleValue },
-      setScale,
-      zoomIn,
-      zoomOut
-    } as PDFAnnotator<E>);
-
-    eventBus.off('textlayerrendered', onInit);
-  }
-
-  eventBus.on('textlayerrendered', onInit);  
-
-  eventBus.on('textlayerrendered', () => {
-    if (unrendered.length > 0) {
-      // Hack - remove the unrendered annotations from the store, and the
-      // attempt to re-add
-      const { store } = anno.state;
-      store.bulkDeleteAnnotation(unrendered);
-      store.bulkAddAnnotation(unrendered, false, Origin.REMOTE);
-    }
+    eventBus.on('textlayerrendered', ({ pageNumber }: { pageNumber: number }) =>
+      store.onLazyRender(pageNumber));
   });
 
   pdfjsLib.getDocument({

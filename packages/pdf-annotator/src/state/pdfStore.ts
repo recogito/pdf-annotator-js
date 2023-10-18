@@ -99,11 +99,15 @@ export const createPDFStore = (store: TextAnnotationStore) => {
     const revived = annotations.map(revive);
     const failed = _bulkAddAnnotation(revived, replace, origin) as PDFAnnotation[];
 
-    // Add them to the list of unrendered annotations
+    // IDs of annotations that failed and succeeded in this run
+    const failedIds = new Set(failed.map(a => a.id));
+    const successfulIds = new Set(revived.map(a => a.id).filter(id => !failedIds.has(id)));
+
+    // Add failed ones to the unrendered list, remove succeeded ones from the unrendered list
     const unrenderedIds = new Set(unrendered.map(a => a.id));
     
     unrendered = [
-      ...unrendered,
+      ...unrendered.filter(a => !successfulIds.has(a.id)),
       ...failed.filter(a => !unrenderedIds.has(a.id))
     ];
 

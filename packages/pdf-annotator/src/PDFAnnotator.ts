@@ -15,19 +15,17 @@
  * limitations under the License.
  */
 import { 
-  Origin, 
   TextAnnotation, 
   TextAnnotationStore, 
   TextAnnotatorOptions, 
   TextAnnotator, 
-  TextAnnotationTarget,
   createTextAnnotator } from '@recogito/text-annotator';
 import * as pdfjsLib from 'pdfjs-dist';
 import * as pdfjsViewer from 'pdfjs-dist/web/pdf_viewer';
 import { addResizeObserver } from './responsive';
-import type { PDFAnnotation, PDFAnnotationTarget, PDFSelector } from './PDFAnnotation';
 import type { PDFScale } from './PDFScale';
 import { createPDFStore } from './state';
+import { createAPI } from './api';
 
 import 'pdfjs-dist/web/pdf_viewer.css';
 import '@recogito/text-annotator/dist/text-annotator.css';
@@ -89,27 +87,6 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
 
   pdfLinkService.setViewer(pdfViewer);
 
-  const setScale = (size: PDFScale | number) => { 
-    if (typeof size === 'number')
-      pdfViewer.currentScale = size;
-    else
-      pdfViewer.currentScaleValue = size;  
-
-    return pdfViewer.currentScale;
-  }
-
-  const zoomIn = (percentage?: number) => {
-    const factor = pdfViewer.currentScale + (percentage || 10) / 100;
-    pdfViewer.currentScale = Math.min(50, factor);
-    return pdfViewer.currentScale;
-  }
-
-  const zoomOut = (percentage?: number) => {
-    const factor = pdfViewer.currentScale - (percentage || 10) / 100;
-    pdfViewer.currentScale = factor;
-    return pdfViewer.currentScale;
-  }
-
   eventBus.on('pagesinit', () => {
     // Default to scale = auto
     pdfViewer.currentScaleValue = 'auto';
@@ -127,9 +104,7 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
         ...anno,
         get currentScale() { return pdfViewer.currentScale },
         get currentScaleValue() { return pdfViewer.currentScaleValue },
-        setScale,
-        zoomIn,
-        zoomOut
+        ...createAPI(anno, pdfViewer, eventBus)
       } as PDFAnnotator<E>);
 
       eventBus.off('textlayerrendered', onInit);

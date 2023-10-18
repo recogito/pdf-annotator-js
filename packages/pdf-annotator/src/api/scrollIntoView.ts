@@ -12,25 +12,25 @@ export const scrollIntoView = <E extends unknown>(
     // If the jump wasn't successful, just jump to the page
     // instead. (The annotation wasn't rendered, but PDF.js
     // will have created the page container DIV already!)
-    const { pageNumber } = annotation.target.selector;
+    const p = annotation.target.selector.pageNumber;
 
-    let timeout: number; 
+    // We'll listen to textlayerrendered events until our target page (+1) comes up
+    const onTextLayerRendered =  ({ pageNumber }: { pageNumber: number }) => {
+      if (pageNumber === p + 1) {
+        // Follow up scroll
+        anno.scrollIntoView(annotation);
 
-    const onScroll = (evt: Event) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(function() {
-        onScrollComplete();
-      }, 100);
-    };
-
-    const onScrollComplete = () => {
-      anno.scrollIntoView(annotation);
-      document.removeEventListener('scroll', onScroll, true);
+        // Unregister this listener
+        eventBus.off('textlayerrendered', onTextLayerRendered);
+      }
     }
 
-    document.addEventListener('scroll', onScroll, true);
+    eventBus.on('textlayerrendered', onTextLayerRendered);  
 
-    const page = document.querySelector(`.page[data-page-number="${pageNumber}"]`);
+    // Just to ensure we don't have dangling listeners
+    setTimeout(() => eventBus.off('textlayerrendered', onTextLayerRendered), 2000);
+
+    const page = document.querySelector(`.page[data-page-number="${p}"]`);
     page?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 

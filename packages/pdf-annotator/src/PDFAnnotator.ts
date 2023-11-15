@@ -19,7 +19,8 @@ import {
   TextAnnotationStore, 
   TextAnnotatorOptions, 
   TextAnnotator, 
-  createTextAnnotator } from '@recogito/text-annotator';
+  createTextAnnotator, 
+  DrawingStyle } from '@recogito/text-annotator';
 import * as pdfjsLib from 'pdfjs-dist';
 import * as pdfjsViewer from 'pdfjs-dist/web/pdf_viewer';
 import { addResizeObserver } from './responsive';
@@ -104,7 +105,9 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
         ...anno,
         get currentScale() { return pdfViewer.currentScale },
         get currentScaleValue() { return pdfViewer.currentScaleValue },
-        ...createAPI(anno, pdfViewer, eventBus)
+        ...createAPI(anno, pdfViewer, eventBus),
+        get style() { return anno.style },
+        set style(s: DrawingStyle | ((annotation: TextAnnotation) => DrawingStyle) | undefined) { anno.style = s }
       } as PDFAnnotator<E>);
 
       eventBus.off('textlayerrendered', onInit);

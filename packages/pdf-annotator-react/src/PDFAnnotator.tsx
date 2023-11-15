@@ -1,6 +1,6 @@
 import { ReactNode, useContext, useEffect, useRef } from 'react';
-import { AnnotoriousContext, Formatter } from '@annotorious/react';
-import { TextAnnotatorOptions } from '@recogito/text-annotator';
+import { AnnotoriousContext, DrawingStyle } from '@annotorious/react';
+import { TextAnnotation, TextAnnotatorOptions } from '@recogito/text-annotator';
 import { createPDFAnnotator, PDFAnnotator as VanillaPDFAnnotator, PDFScale } from '@recogito/pdf-annotator';
 
 import '@recogito/pdf-annotator/pdf-anntator.css';
@@ -10,7 +10,7 @@ export type PDFAnnotatorProps<E extends unknown> = TextAnnotatorOptions<E> & {
 
   children?: ReactNode | JSX.Element;
 
-  formatter?: Formatter;
+  style?: DrawingStyle | ((annotation: TextAnnotation) => DrawingStyle);
 
   pdfUrl: string;
 
@@ -20,7 +20,7 @@ export type PDFAnnotatorProps<E extends unknown> = TextAnnotatorOptions<E> & {
 
 export const PDFAnnotator = <E extends unknown>(props: PDFAnnotatorProps<E>) => {
 
-  const { children, formatter, pdfUrl, ...opts } = props;
+  const { children, style, pdfUrl, ...opts } = props;
 
   const el = useRef<HTMLDivElement>(null);
 
@@ -29,7 +29,7 @@ export const PDFAnnotator = <E extends unknown>(props: PDFAnnotatorProps<E>) => 
   useEffect(() => {    
     createPDFAnnotator(el.current, pdfUrl, opts)
       .then(anno => {
-        anno.setFormatter(props.formatter);
+        anno.style = props.style;
         setAnno(anno);
       });
   }, []);
@@ -43,8 +43,8 @@ export const PDFAnnotator = <E extends unknown>(props: PDFAnnotatorProps<E>) => 
     if (!anno)
       return;
     
-    anno.setFormatter(props.formatter);
-  }, [props.formatter]);
+    anno.style = props.style;
+  }, [props.style]);
 
   return (
     <div 

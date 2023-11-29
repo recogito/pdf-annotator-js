@@ -105,9 +105,7 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
         ...anno,
         get currentScale() { return pdfViewer.currentScale },
         get currentScaleValue() { return pdfViewer.currentScaleValue },
-        ...createAPI(anno, pdfViewer, eventBus),
-        get style() { return anno.style },
-        set style(s: DrawingStyle | ((annotation: TextAnnotation) => DrawingStyle) | undefined) { anno.style = s }
+        ...createAPI(anno, pdfViewer, eventBus)
       } as PDFAnnotator<E>);
 
       eventBus.off('textlayerrendered', onInit);

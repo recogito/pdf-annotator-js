@@ -18,6 +18,8 @@ export type PDFAnnotatorProps<E extends unknown> = TextAnnotatorOptions<E> & {
 
   pageSize?: PDFScale | number;
 
+  onRendered?(): void;
+
 }
 
 export const PDFAnnotator = <E extends unknown>(props: PDFAnnotatorProps<E>) => {
@@ -33,6 +35,8 @@ export const PDFAnnotator = <E extends unknown>(props: PDFAnnotatorProps<E>) => 
       .then(anno => {
         anno.setStyle(props.style);
         setAnno(anno);
+
+        props.onRendered && props.onRendered();
       });
   }, []);
 

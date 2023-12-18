@@ -19,8 +19,8 @@ import {
   TextAnnotationStore, 
   TextAnnotatorOptions, 
   TextAnnotator, 
-  createTextAnnotator, 
-  DrawingStyle } from '@recogito/text-annotator';
+  createTextAnnotator
+} from '@recogito/text-annotator';
 import * as pdfjsLib from 'pdfjs-dist';
 import * as pdfjsViewer from 'pdfjs-dist/web/pdf_viewer';
 import { addResizeObserver } from './responsive';

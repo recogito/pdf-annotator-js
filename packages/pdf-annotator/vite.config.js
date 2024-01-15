@@ -13,16 +13,22 @@ export default defineConfig({
   },
   build: {
     sourcemap: true,
+    target: 'esnext',
     lib: {
       entry: './src/index.ts',
       name: 'PDFAnnotator',
-      formats: ['es', 'umd'],
+      formats: ['es'],
       fileName: (format) => `pdf-annotator.${format}.js`
     },
     rollupOptions: {
       output: {
         assetFileNames: 'pdf-annotator.[ext]'
       }
+    }
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'esnext'
     }
   }
 });

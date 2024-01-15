@@ -31,6 +31,12 @@ export default defineConfig(({ command, mode }) => ({
         assetFileNames: 'react-pdf-annotator.[ext]'
       }
     },
-    sourcemap: true
+    sourcemap: true,
+    target: 'esnext'
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'esnext'
+    }
   }
 }));

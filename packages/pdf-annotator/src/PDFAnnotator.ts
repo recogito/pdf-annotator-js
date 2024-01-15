@@ -22,7 +22,7 @@ import {
   createTextAnnotator
 } from '@recogito/text-annotator';
 import * as pdfjsLib from 'pdfjs-dist';
-import * as pdfjsViewer from 'pdfjs-dist/web/pdf_viewer';
+import * as pdfjsViewer from 'pdfjs-dist/web/pdf_viewer.mjs';
 import { addResizeObserver } from './responsive';
 import type { PDFScale } from './PDFScale';
 import { createPDFStore } from './state';
@@ -33,7 +33,7 @@ import '@recogito/text-annotator/dist/text-annotator.css';
 import './PDFAnnotator.css';
 
 // @ts-ignore
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.js', import.meta.url);
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.mjs', import.meta.url);
 
 const CMAP_URL = 'pdfjs-dist/cmaps/';
 const CMAP_PACKED = true;

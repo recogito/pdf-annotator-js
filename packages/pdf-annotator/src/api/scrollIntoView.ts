@@ -1,5 +1,5 @@
 import type { TextAnnotator } from '@recogito/text-annotator';
-import type { EventBus } from 'pdfjs-dist/web/pdf_viewer';
+import type { EventBus } from 'pdfjs-dist/web/pdf_viewer.mjs';
 import type { PDFAnnotation } from 'src/PDFAnnotation';
 
 export const scrollIntoView = <E extends unknown>(

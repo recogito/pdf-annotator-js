@@ -5,7 +5,7 @@ import type { PDFAnnotation } from 'src/PDFAnnotation';
 export const scrollIntoView = <E extends unknown>(
   anno: TextAnnotator<E>, 
   eventBus: EventBus
-) => (annotation: PDFAnnotation) => {
+) => (annotation: PDFAnnotation) => {  
   const success = anno.scrollIntoView(annotation);
 
   if (!success) {
@@ -16,9 +16,9 @@ export const scrollIntoView = <E extends unknown>(
 
     // We'll listen to textlayerrendered events until our target page (+1) comes up
     const onTextLayerRendered =  ({ pageNumber }: { pageNumber: number }) => {
-      if (pageNumber === p + 1) {
+      if (pageNumber === p) {
         // Follow up scroll
-        anno.scrollIntoView(annotation);
+        setTimeout(() => anno.scrollIntoView(annotation), 500);
 
         // Unregister this listener
         eventBus.off('textlayerrendered', onTextLayerRendered);

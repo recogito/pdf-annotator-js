@@ -66,11 +66,17 @@ const revive = (a: PDFAnnotation | TextAnnotation): PDFAnnotation => ({
   target: reviveTarget(a.target)
 });
 
+interface PDFAnnotationStore extends TextAnnotationStore {
+
+  onLazyRender(page: number): void;
+
+}
+
 /**
  * The PDF plugin intercepts a few methods on the standard
  * TextAnnotationStore and applies PDF-specific target-reviving.
  */
-export const createPDFStore = (store: TextAnnotationStore) => {
+export const createPDFStore = (store: TextAnnotationStore): PDFAnnotationStore => {
 
   // Keep track of annotations that failed to render
   // because of PDF.js lazy content rendering

@@ -19,7 +19,7 @@ export const App = () => {
       <PDFAnnotator 
         pdfUrl="compressed.tracemonkey-pldi-09.pdf" />
 
-      <ul className="annotation-list">
+      <ul className="annotation-list not-annotatable">
         {annotations.map(annotation => (
           <li key={annotation.id} onClick={() => anno.scrollIntoView(annotation)}>
             {annotation.target.selector[0].pageNumber} : {annotation.target.selector[0].quote}

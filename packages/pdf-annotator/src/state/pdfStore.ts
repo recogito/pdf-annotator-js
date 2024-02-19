@@ -1,5 +1,5 @@
-import { 
-  Origin, 
+import { Origin } from '@recogito/text-annotator';
+import type { 
   TextAnnotation, 
   TextAnnotationStore, 
   TextAnnotationTarget, 

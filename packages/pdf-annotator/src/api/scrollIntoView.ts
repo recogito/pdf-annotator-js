@@ -6,7 +6,7 @@ export const scrollIntoView = <E extends unknown>(
   anno: TextAnnotator<E>, 
   eventBus: EventBus
 ) => (annotation: PDFAnnotation) => {  
-  const p = annotation.target.selector.pageNumber;
+  const p = annotation.target.selector[0].pageNumber;
 
   // Always scroll to page first
   const page = document.querySelector(`.page[data-page-number="${p}"]`);

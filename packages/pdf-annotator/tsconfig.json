@@ -11,6 +11,7 @@
     "module": "ESNext",
     "moduleResolution": "Node",
     "outDir": "dist",
+    "preserveSymlinks": true,
     "resolveJsonModule": true,
     "skipLibCheck": false,
     "sourceMap": true,

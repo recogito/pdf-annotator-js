@@ -8,7 +8,7 @@ export interface PDFAnnotation extends TextAnnotation {
 
 export interface PDFAnnotationTarget extends TextAnnotationTarget {
 
-  selector: PDFSelector;
+  selector: PDFSelector[];
 
 }
 

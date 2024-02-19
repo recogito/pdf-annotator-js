@@ -2,7 +2,8 @@ import {
   Origin, 
   TextAnnotation, 
   TextAnnotationStore, 
-  TextAnnotationTarget 
+  TextAnnotationTarget, 
+  TextSelector
 } from '@recogito/text-annotator';
 import type { 
   PDFAnnotation, 
@@ -20,28 +21,28 @@ import type {
  * created by the user will always have an offsetReference, annotations coming from the backend or 
  * realtime channel will always have a page number).
  */
-const reviveTarget = (target: PDFAnnotationTarget | TextAnnotationTarget): PDFAnnotationTarget => {
-  const { selector } = target;
+const reviveTarget = (target: PDFAnnotationTarget | TextAnnotationTarget): PDFAnnotationTarget => ({
+  ...target,
+  selector: target.selector.map(reviveSelector)
+});
 
+const reviveSelector = (selector: PDFSelector | TextSelector): PDFSelector => {
   const hasValidOffsetReference = 
     'offsetReference' in selector && 
     selector.offsetReference instanceof HTMLElement;
 
   if (hasValidOffsetReference) {
     if ('pageNumber' in selector) {
-      // Already a PDF annotation target - doesn't need reviving
-      return target as PDFAnnotationTarget;
+      // Already a PDF selector - doesn't need reviving
+      return selector as PDFSelector;
     } else {
       // No pageNumber, but offsetReference element -> crosswalk
-      const { offsetReference } = target.selector;
+      const { offsetReference } = selector;
       const pageNumber = parseInt(offsetReference.dataset.pageNumber);
     
       return {
-        ...target,
-        selector: {
-          ...target.selector,
-          pageNumber 
-        }
+        ...selector,
+        pageNumber 
       };
     }
   } else if ('pageNumber' in selector) {
@@ -49,16 +50,13 @@ const reviveTarget = (target: PDFAnnotationTarget | TextAnnotationTarget): PDFAn
     const offsetReference: HTMLElement = document.querySelector(`.page[data-page-number="${pageNumber}"]`);
 
     return {
-      ...target,
-      selector: {
-        ...target.selector,
-        offsetReference
-      } as PDFSelector
-    };
+      ...selector,
+      offsetReference
+    } as PDFSelector;
   } else { 
     // Has neither offsetReference - shouldn't happen
-    console.warn('Invalid PDF annotation target', target);
-    return target as PDFAnnotationTarget;
+    console.warn('Invalid PDF selector', selector);
+    return selector as PDFSelector;
   }
 }
 
@@ -126,7 +124,7 @@ export const createPDFStore = (store: TextAnnotationStore) => {
   const onLazyRender = (page: number) => {
     // Get annotations for this page and +2 in both directions
     const toRender = unrendered.filter(a => {
-      const { pageNumber } = a.target.selector;
+      const { pageNumber } = a.target.selector[0];
       return page >= pageNumber - 2 && page <= pageNumber + 2;
     });
 

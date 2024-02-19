@@ -128,7 +128,7 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
   }).catch(error => reject(error));
 
   addResizeObserver(container, () => {
-    const { currentScaleValue } = pdfViewer;
+    const { currentScaleValue } = pdfViewer;
     if (
       currentScaleValue === 'auto' ||
       currentScaleValue === 'page-fit' ||

@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { useAnnotations, useAnnotator } from '@annotorious/react';
 import { PDFAnnotator } from '../src';
-import { PDFAnnotator as VanillaPDFAnnotator } from '@recogito/pdf-annotator';
+import { PDFAnnotation, PDFAnnotator as VanillaPDFAnnotator } from '@recogito/pdf-annotator';
 
 export const App = () => {
 
   const anno = useAnnotator<VanillaPDFAnnotator>();
 
-  const annotations = useAnnotations();
+  const annotations = useAnnotations<PDFAnnotation>();
 
   useEffect(() => {
     if (anno)
@@ -22,7 +22,7 @@ export const App = () => {
       <ul className="annotation-list">
         {annotations.map(annotation => (
           <li key={annotation.id} onClick={() => anno.scrollIntoView(annotation)}>
-            {annotation.target.selector.pageNumber} : {annotation.target.selector.quote}
+            {annotation.target.selector[0].pageNumber} : {annotation.target.selector[0].quote}
           </li>
         ))}
       </ul>

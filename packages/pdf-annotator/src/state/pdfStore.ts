@@ -129,7 +129,7 @@ export const createPDFStore = (store: TextAnnotationStore) => {
     });
 
     if (toRender.length > 0) {
-      // Attempt to update the unrendered annotations in the store
+      // Attempt to update the unrendered annotations in the store      
       store.bulkDeleteAnnotation(toRender, Origin.REMOTE);
       store.bulkAddAnnotation(toRender, false, Origin.REMOTE);
     }

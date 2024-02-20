@@ -85,7 +85,12 @@
       window.onload = async function() {
         const container = document.getElementById('app');
       
-        var anno = await createPDFAnnotator(container, 'compressed.tracemonkey-pldi-09.pdf');
+        var anno = await createPDFAnnotator(
+          container, 
+          'compressed.tracemonkey-pldi-09.pdf',
+          { 
+            experimentalCSSRenderer: true
+          });
 
         anno.on('createAnnotation', a => console.log('create', a));
         anno.on('deleteAnnotation', a => console.log('delete', a));

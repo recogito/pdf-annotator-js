@@ -17,6 +17,7 @@ export const App = () => {
   return (
     <>
       <PDFAnnotator 
+        experimentalCSSRenderer
         pdfUrl="compressed.tracemonkey-pldi-09.pdf" />
 
       <ul className="annotation-list not-annotatable">

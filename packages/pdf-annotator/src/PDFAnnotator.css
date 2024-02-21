@@ -1,5 +1,10 @@
-.r6o-annotatable .textLayer {
+.textLayer {
+  opacity: 1;
   position: absolute;
+}
+
+.pdfViewer .textLayer span::selection {
+  background-color: rgb(0, 128, 255, 0.25) !important;
 }
 
 .r6o-annotatable.hovered .textLayer span {

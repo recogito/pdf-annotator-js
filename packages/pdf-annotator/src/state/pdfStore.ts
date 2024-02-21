@@ -78,9 +78,36 @@ interface PDFAnnotationStore extends TextAnnotationStore {
  */
 export const createPDFStore = (store: TextAnnotationStore): PDFAnnotationStore => {
 
-  // Keep track of annotations that failed to render
-  // because of PDF.js lazy content rendering
-  let unrendered: PDFAnnotation[] = [];
+  // Keep track of annotations per page because of PDF.js lazy rendering
+  const rendered: Map<number, PDFAnnotation[]> = new Map();
+
+  const upsertRenderedAnnotation = (a: PDFAnnotation) => {
+    const pages = a.target.selector.map((s:PDFSelector) => s.pageNumber);
+
+    pages.forEach(p => {
+      const current = rendered.get(p) || [];
+      const next = [
+        ...current.filter(annotation => annotation.id !== a.id),
+        a
+      ]
+
+      rendered.set(p, next);
+    });  
+  }
+
+  const updateRenderedTarget = (t: PDFAnnotationTarget) => {
+    const pages = t.selector.map((s:PDFSelector) => s.pageNumber);
+
+    pages.forEach(p => {
+      const current = rendered.get(p) || [];
+      const next = current.map(a => a.id === t.annotation ? {
+        ...a,
+        target: t
+      } : a);
+
+      rendered.set(p, next);
+    });      
+  }
 
   // Intercept and monkey-patch API where needed
   const _addAnnotation = store.addAnnotation;
@@ -88,8 +115,8 @@ export const createPDFStore = (store: TextAnnotationStore): PDFAnnotationStore =
     const revived = revive(annotation);
 
     const success = _addAnnotation(revived, origin);
-    if (!success)
-      unrendered = [...unrendered, revived];
+
+    upsertRenderedAnnotation(revived);
 
     return success;
   }
@@ -101,44 +128,39 @@ export const createPDFStore = (store: TextAnnotationStore): PDFAnnotationStore =
     origin = Origin.LOCAL
   ) => {
     const revived = annotations.map(revive);
+
     const failed = _bulkAddAnnotation(revived, replace, origin) as PDFAnnotation[];
-
-    // IDs of annotations that failed and succeeded in this run
-    const failedIds = new Set(failed.map(a => a.id));
-    const successfulIds = new Set(revived.map(a => a.id).filter(id => !failedIds.has(id)));
-
-    // Add failed ones to the unrendered list, remove succeeded ones from the unrendered list
-    const unrenderedIds = new Set(unrendered.map(a => a.id));
-    
-    unrendered = [
-      ...unrendered.filter(a => !successfulIds.has(a.id)),
-      ...failed.filter(a => !unrenderedIds.has(a.id))
-    ];
+    revived.forEach(upsertRenderedAnnotation);
 
     return failed;
   }
 
   const _updateAnnotation = store.updateAnnotation;
-  store.updateAnnotation = (annotation: PDFAnnotation | TextAnnotation, origin = Origin.LOCAL) =>
-    _updateAnnotation(revive(annotation), origin);
+  store.updateAnnotation = (annotation: PDFAnnotation | TextAnnotation, origin = Origin.LOCAL) => {
+    const revived = revive(annotation);
+    _updateAnnotation(revived, origin);
+    upsertRenderedAnnotation(revived);
+  }
 
   const _updateTarget = store.updateTarget;
-  store.updateTarget = (target: PDFAnnotationTarget | TextAnnotationTarget, origin = Origin.LOCAL) => 
-    _updateTarget(reviveTarget(target), origin);
+  store.updateTarget = (target: PDFAnnotationTarget | TextAnnotationTarget, origin = Origin.LOCAL) => {
+    const revived = reviveTarget(target);
+    _updateTarget(revived, origin);
+    updateRenderedTarget(revived);
+  }
 
   // Callback method for when a new page gets rendered by PDF.js
   const onLazyRender = (page: number) => {
     // Get annotations for this page and +2 in both directions
-    const toRender = unrendered.filter(a => {
-      const { pageNumber } = a.target.selector[0];
-      return page >= pageNumber - 2 && page <= pageNumber + 2;
-    });
+    const pages = [page - 2, page - 1, page, page + 1, page + 2].filter(n => n >= 0);
+    
+    const toRender = pages.reduce<PDFAnnotation[]>((annotations, page) => (
+      [...annotations, ...(rendered.get(page) || [])]
+    ), []);
 
-    if (toRender.length > 0) {
+    if (toRender.length > 0)
       // Attempt to update the unrendered annotations in the store      
-      store.bulkDeleteAnnotation(toRender, Origin.REMOTE);
-      store.bulkAddAnnotation(toRender, false, Origin.REMOTE);
-    }
+      store.bulkUpsertAnnotations(toRender, Origin.REMOTE);
   }  
 
   return {

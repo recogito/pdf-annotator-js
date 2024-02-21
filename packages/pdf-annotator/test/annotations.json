@@ -1,5 +1,27 @@
 [
   {
+    "id": "3b8c5c1d-0432-42c9-82e7-b5770c6c9854",
+    "bodies": [],
+    "target": {
+        "annotation": "3b8c5c1d-0432-42c9-82e7-b5770c6c9854",
+        "selector": [
+            {
+                "quote": "anguage design and implementation, pages 291–300. ACM New York, NY, USA, 1",
+                "start": 2404,
+                "end": 2478,
+                "range": {},
+                "offsetReference": {},
+                "pageNumber": 14
+            }
+        ],
+        "creator": {
+            "isGuest": true,
+            "id": "dDkm9PZsUPfohJLEZrZT"
+        },
+        "created": "2024-02-21T07:09:59.952Z"
+    }
+  },
+  {
     "id": "317adb64-7d66-41bf-9a00-eebbd905fd81",
     "bodies": [],
     "target": {

@@ -1,6 +1,6 @@
 {
   "name": "@recogito/react-pdf-annotator",
-  "version": "1.0.0-rc.9",
+  "version": "1.0.0-rc.10",
   "description": "React bindings to the Recogito PDF annotator",
   "author": "Rainer Simon",
   "license": "BSD-3-Clause",

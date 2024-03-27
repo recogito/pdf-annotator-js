@@ -1,4 +1,4 @@
-.pdfViewer.r6o-annotatable .textLayer {
+.pdfViewer .textLayer {
   opacity: 1;
   position: absolute;
 }
@@ -9,6 +9,10 @@
 
 .r6o-annotatable.hovered .textLayer span {
   cursor: pointer;
+}
+
+.r6o-span-highlight-layer {
+  z-index: 2;
 }
 
 .r6o-highlight-layer.bg {

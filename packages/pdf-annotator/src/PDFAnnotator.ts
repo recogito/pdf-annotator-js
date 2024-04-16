@@ -88,7 +88,7 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
 
   pdfLinkService.setViewer(pdfViewer);
 
-  eventBus.on('pagesinit', () => {
+  eventBus.on('pagesinit', () => {    
     // Default to scale = auto
     pdfViewer.currentScaleValue = 'auto';
 

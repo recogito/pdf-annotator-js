@@ -1,6 +1,6 @@
 {
   "name": "@recogito/react-pdf-annotator",
-  "version": "1.0.0-rc.14",
+  "version": "1.0.0-rc.15",
   "description": "React bindings to the Recogito PDF annotator",
   "author": "Rainer Simon",
   "license": "BSD-3-Clause",
@@ -30,19 +30,19 @@
     "./react-pdf-annotator.css": "./dist/react-pdf-annotator.css"
   },
   "devDependencies": {
-    "@types/react-dom": "^18.2.22",
+    "@types/react-dom": "^18.2.25",
     "@vitejs/plugin-react": "^4.2.1",
-    "openseadragon": "4.1.0",
+    "openseadragon": "4.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "typescript": "^5.4.3",
+    "typescript": "^5.4.5",
     "vite": "^4.5.3",
-    "vite-plugin-dts": "^3.8.0",
+    "vite-plugin-dts": "^3.8.3",
     "vite-tsconfig-paths": "^4.3.2"
   },
   "peerDependencies": {
     "@annotorious/react": "^3.0.0-rc.22",
-    "@recogito/pdf-annotator": "1.0.0-rc.14",
+    "@recogito/pdf-annotator": "1.0.0-rc.15",
     "react": "16.8.0 || >=17.x || >=18.x",
     "react-dom": "16.8.0 || >=17.x || >=18.x"
   }

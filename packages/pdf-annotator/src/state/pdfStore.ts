@@ -150,13 +150,13 @@ export const createPDFStore = (store: TextAnnotationStore): PDFAnnotationStore =
   }
 
   // Callback method for when a new page gets rendered by PDF.js
-  const onLazyRender = (page: number) => {
+  const onLazyRender = (page: number) => {    
     // Get annotations for this page and +2 in both directions
     const pages = [page - 2, page - 1, page, page + 1, page + 2].filter(n => n >= 0);
     
     const toRender = pages.reduce<PDFAnnotation[]>((annotations, page) => (
       [...annotations, ...(rendered.get(page) || [])]
-    ), []);
+    ), []).map(({ id }) => store.getAnnotation(id));
 
     if (toRender.length > 0)
       // Attempt to update the unrendered annotations in the store      

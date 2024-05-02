@@ -1,6 +1,6 @@
 {
   "name": "@recogito/pdf-annotator",
-  "version": "1.0.0-rc.16",
+  "version": "1.0.0-rc.17",
   "description": "PDF annotation in the browser, using PDF.js and the Recogito Text Annotator",
   "author": "Rainer Simon",
   "license": "BSD-3-Clause",
@@ -22,7 +22,8 @@
   "module": "./dist/pdf-annotator.es.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "copy-worker.js"
   ],
   "exports": {
     ".": {

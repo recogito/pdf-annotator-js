@@ -32,8 +32,7 @@ import 'pdfjs-dist/web/pdf_viewer.css';
 import '@recogito/text-annotator/dist/text-annotator.css';
 import './PDFAnnotator.css';
 
-// @ts-ignore
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.mjs', import.meta.url);
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.mjs';
 
 const CMAP_URL = 'pdfjs-dist/cmaps/';
 const CMAP_PACKED = true;

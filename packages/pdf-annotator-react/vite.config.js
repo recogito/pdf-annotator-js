@@ -37,7 +37,6 @@ export default defineConfig(({ command, mode }) => ({
   optimizeDeps: {
     esbuildOptions: {
       target: 'esnext'
-    },
-    exclude: ['pdfjs-dist']
+    }
   }
 }));

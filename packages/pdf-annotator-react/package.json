@@ -48,5 +48,8 @@
     "pdfjs-dist": "4.2.67",
     "react": "16.8.0 || >=17.x || >=18.x",
     "react-dom": "16.8.0 || >=17.x || >=18.x"
+  },
+  "dependencies": {
+    "@floating-ui/react": "^0.26.13"
   }
 }

@@ -1,6 +1,6 @@
 import { ReactNode, useContext, useEffect, useRef } from 'react';
-import { AnnotoriousContext, DrawingStyle } from '@annotorious/react';
-import { Filter, TextAnnotation, TextAnnotatorOptions } from '@recogito/text-annotator';
+import { AnnotoriousContext } from '@annotorious/react';
+import { Filter, TextAnnotatorOptions, HighlightStyleExpression } from '@recogito/text-annotator';
 import { createPDFAnnotator, PDFAnnotator as VanillaPDFAnnotator, PDFScale } from '@recogito/pdf-annotator';
 
 import '@recogito/pdf-annotator/pdf-anntator.css';
@@ -12,7 +12,7 @@ export type PDFAnnotatorProps<E extends unknown> = TextAnnotatorOptions<E> & {
 
   filter?: Filter;
 
-  style?: DrawingStyle | ((annotation: TextAnnotation) => DrawingStyle);
+  style?: HighlightStyleExpression
 
   pdfUrl: string;
 

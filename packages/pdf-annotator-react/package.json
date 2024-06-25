@@ -33,23 +33,23 @@
   },
   "devDependencies": {
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.2.1",
+    "@vitejs/plugin-react": "^4.3.1",
     "openseadragon": "4.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "typescript": "^5.4.5",
-    "vite": "^5.2.11",
+    "typescript": "^5.5.2",
+    "vite": "^5.3.1",
     "vite-plugin-dts": "^3.9.1",
     "vite-tsconfig-paths": "^4.3.2"
   },
   "peerDependencies": {
-    "@annotorious/react": "^3.0.0-rc.25",
+    "@annotorious/react": "^3.0.0-rc.29",
     "@recogito/pdf-annotator": "1.0.0-rc.21",
     "pdfjs-dist": "4.2.67",
     "react": "16.8.0 || >=17.x || >=18.x",
     "react-dom": "16.8.0 || >=17.x || >=18.x"
   },
   "dependencies": {
-    "@floating-ui/react": "^0.26.13"
+    "@floating-ui/react": "^0.26.18"
   }
 }

@@ -35,11 +35,11 @@
   },
   "devDependencies": {
     "typescript": "5.5.2",
-    "vite": "^5.3.1",
+    "vite": "^5.3.2",
     "vite-plugin-dts": "^3.9.1"
   },
   "dependencies": {
-    "@recogito/text-annotator": "^3.0.0-rc.33",
+    "@recogito/text-annotator": "^3.0.0-rc.35",
     "pdfjs-dist": "4.3.136"
   }
 }

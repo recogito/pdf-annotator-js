@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-const path = '../../node_modules/pdfjs-dist/build/pdf.worker.min.mjs';
+const path = '../../node_modules/pdfjs-dist/legacy/build/pdf.worker.min.mjs';
 
 fs.copyFileSync(path, './pdf.worker.min.mjs');
 

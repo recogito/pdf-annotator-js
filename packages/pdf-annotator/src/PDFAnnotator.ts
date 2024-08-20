@@ -22,13 +22,13 @@ import {
   createTextAnnotator
 } from '@recogito/text-annotator';
 import * as pdfjsLib from 'pdfjs-dist';
-import * as pdfjsViewer from 'pdfjs-dist/web/pdf_viewer.mjs';
+import * as pdfjsViewer from 'pdfjs-dist/legacy/web/pdf_viewer.mjs';
 import { addResizeObserver } from './responsive';
 import type { PDFScale } from './PDFScale';
 import { createPDFStore } from './state';
 import { createAPI } from './api';
 
-import 'pdfjs-dist/web/pdf_viewer.css';
+import 'pdfjs-dist/legacy/web/pdf_viewer.css';
 import '@recogito/text-annotator/dist/text-annotator.css';
 import './PDFAnnotator.css';
 

@@ -96,7 +96,7 @@ export const createPDFAnnotator = <E extends unknown = TextAnnotation>(
       offsetReferenceSelector: '.page'
     }); 
 
-    const store = createPDFStore(anno.state.store as TextAnnotationStore);
+    const store = createPDFStore(anno.state.store as TextAnnotationStore, pdfViewer);
 
     // Listen to the first 'textlayerrendered' event (once)
     const onInit = () => {

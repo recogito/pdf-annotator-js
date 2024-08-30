@@ -1,4 +1,5 @@
-import { Origin } from '@recogito/text-annotator';
+import { mergeClientRects, Origin } from '@recogito/text-annotator';
+import * as pdfjsViewer from 'pdfjs-dist/legacy/web/pdf_viewer.mjs';
 import type { 
   TextAnnotation, 
   TextAnnotationStore, 
@@ -76,7 +77,10 @@ interface PDFAnnotationStore extends TextAnnotationStore {
  * The PDF plugin intercepts a few methods on the standard
  * TextAnnotationStore and applies PDF-specific target-reviving.
  */
-export const createPDFStore = (store: TextAnnotationStore): PDFAnnotationStore => {
+export const createPDFStore = (
+  store: TextAnnotationStore,
+  pdfViewer: pdfjsViewer.PDFViewer
+): PDFAnnotationStore => {
 
   // Keep track of annotations per page because of PDF.js lazy rendering
   const rendered: Map<number, PDFAnnotation[]> = new Map();
@@ -92,7 +96,7 @@ export const createPDFStore = (store: TextAnnotationStore): PDFAnnotationStore =
       ]
 
       rendered.set(p, next);
-    });  
+    });
   }
 
   const updateRenderedTarget = (t: PDFAnnotationTarget) => {
@@ -145,6 +149,54 @@ export const createPDFStore = (store: TextAnnotationStore): PDFAnnotationStore =
   const _updateTarget = store.updateTarget;
   store.updateTarget = (target: PDFAnnotationTarget | TextAnnotationTarget, origin = Origin.LOCAL) => {
     const revived = reviveTarget(target);
+
+    const pageNumber = revived.selector[0].pageNumber;
+
+    const view = pdfViewer.getPageView(pageNumber - 1);
+    const canvas = view.canvas as HTMLCanvasElement;
+
+    const { offsetWidth, offsetHeight } = canvas;
+
+    // PDF viewport height + width
+    const { height, width, scale } = view.viewport;
+    
+    const clientPointToPDFPoint = ({ x, y }: { x: number, y: number }) => {
+      const { left, top } = canvas.getBoundingClientRect();
+
+      const offsetX = x - left;
+      const offsetY = y - top;
+
+      // Canvas and PDF coords are flipped in Y axis
+      const bottom = offsetHeight - offsetY;
+
+      const pdfX = width * offsetX / offsetWidth / scale;
+      const pdfY = height * bottom / offsetHeight / scale;
+
+      return { x: pdfX, y: pdfY };
+    }
+
+    const rectToQuadPoints = (rect: DOMRect) => {
+      // QuadPoint-compliant: starting bottom-left, counter-clockwise.
+      const p1 = { x: rect.left, y: rect.bottom };
+      const p2 = { x: rect.right, y: rect.bottom };
+      const p3 = { x: rect.right, y: rect.top };
+      const p4 = { x: rect.left, y: rect.top };
+
+      const pdfPoints = [p1, p2, p3, p4].map(clientPointToPDFPoint);
+
+      return pdfPoints.reduce<number[]>((qp, point) => {
+        return [...qp, point.x, point.y];
+      },[]);
+    }
+
+    const notCollapsed = (rect: DOMRect) => rect.width > 1 && rect.height > 1;
+    
+    const rects = [...revived.selector[0].range.getClientRects()].filter(notCollapsed);
+    const merged = mergeClientRects(rects);
+
+    const quadpoints = merged.reduce<number[]>((qp, rect) => [...qp, ...rectToQuadPoints(rect)], []);
+    console.log(quadpoints);
+
     _updateTarget(revived, origin);
     updateRenderedTarget(revived);
   }

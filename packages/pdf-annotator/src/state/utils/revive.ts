@@ -11,12 +11,12 @@ import { PDFAnnotation, PDFAnnotationTarget, PDFSelector } from '../../PDFAnnota
  * created by the user will always have an offsetReference, annotations coming from the backend or 
  * realtime channel will always have a page number).
  */
-const reviveTarget = (target: PDFAnnotationTarget | TextAnnotationTarget): PDFAnnotationTarget => ({
+export const reviveTarget = (target: PDFAnnotationTarget | TextAnnotationTarget): PDFAnnotationTarget => ({
   ...target,
   selector: target.selector.map(reviveSelector)
 });
 
-const reviveSelector = (selector: PDFSelector | TextSelector): PDFSelector => {
+export const reviveSelector = (selector: PDFSelector | TextSelector): PDFSelector => {
   const hasValidOffsetReference = 
     'offsetReference' in selector && 
     selector.offsetReference instanceof HTMLElement;

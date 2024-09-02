@@ -67,8 +67,8 @@ export const createPDFAnnotator = (
   );
   selectionHandler.setUser(currentUser);
 
-  // pdfViewer.eventBus.on('textlayerrendered', ({ pageNumber }: { pageNumber: number }) =>
-  //   store.onLazyRender(pageNumber));
+  viewer.eventBus.on('textlayerrendered', ({ pageNumber }: { pageNumber: number }) =>
+    store.onLazyRender(pageNumber));
 
   const removeResizeObserver = addResizeObserver(container, () => {
     const { currentScaleValue } = viewer;

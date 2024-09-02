@@ -7,8 +7,6 @@ import {
   TextAnnotatorOptions
 } from '@recogito/text-annotator';
 import type { 
-  ChangeSet,
-  Origin,
   StoreChangeEvent, 
   StoreObserver, 
   StoreObserveOptions, 
@@ -37,7 +35,7 @@ export const createPDFAnnotatorState = (
 ) => {
 
   // The 'inner' text annotator
-  const { store: innerStore, selection, hover, viewport } = createTextAnnotatorState(container, opts.userSelectAction);
+  const { store: innerStore, selection, hover, viewport } = createTextAnnotatorState(container.querySelector('.pdfViewer'), opts.userSelectAction);
 
   const observers: StoreObserver<PDFAnnotation>[] = [];
 
@@ -65,10 +63,10 @@ export const createPDFAnnotatorState = (
     const created = (changes.created || []);
     const updated = (changes.updated || []);
 
-    // Compute quadpoints for created and updated annotations
-    console.log('created', created);
-    console.log('updated', updated);
+    created.forEach(() => console.log('created'));
+    updated.forEach(() => console.log('updated'));
 
+    // TODO for testing only
     const toCrosswalk = updated.map(u => u.newValue);
     
     toCrosswalk.forEach(a => {
@@ -77,7 +75,7 @@ export const createPDFAnnotatorState = (
 
       const rects = innerStore.getAnnotationRects(a.id);
       const quadpoints = getQuadPoints(rects, page);
-      console.log(quadpoints);
+      // console.log(quadpoints);
     })
 
   });

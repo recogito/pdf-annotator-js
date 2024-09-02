@@ -14,6 +14,7 @@ import { createPDFAnnotatorState } from './state/PDFAnnotatorState';
 import './PDFAnnotator.css';
 import '@recogito/text-annotator/dist/text-annotator.css';
 import { createLifecycleObserver, createUndoStack, User } from '@annotorious/core';
+import { createAPI } from './api';
 
 export interface PDFAnnotator extends TextAnnotator<PDFAnnotation> {
 
@@ -34,6 +35,8 @@ export const createPDFAnnotator = (
   pdfURL: string,
   options: TextAnnotatorOptions<PDFAnnotation> = {}
 ) => createPDFViewer(container, pdfURL).then(pdfViewer => {
+  console.log(pdfViewer);
+  
   const opts = fillDefaults<PDFAnnotation>(options, {
     annotatingEnabled: true
   });
@@ -49,13 +52,13 @@ export const createPDFAnnotator = (
 
   let currentUser: User = opts.user;
 
-  const highlightRenderer =createSpansRenderer(container, state, viewport);
+  const highlightRenderer = createSpansRenderer(container, state, viewport);
 
   if (opts.style)
     highlightRenderer.setStyle(opts.style);
 
   const selectionHandler = SelectionHandler(
-    container, 
+    container.querySelector('.pdfViewer'), 
     state, 
     opts.annotatingEnabled, 
     '.page'
@@ -74,7 +77,6 @@ export const createPDFAnnotator = (
 
   // pdfViewer.eventBus.on('textlayerrendered', ({ pageNumber }: { pageNumber: number }) =>
   //   store.onLazyRender(pageNumber));
-
   const removeResizeObserver = addResizeObserver(container, () => {
     const { currentScaleValue } = pdfViewer;
     if (
@@ -94,7 +96,9 @@ export const createPDFAnnotator = (
   }
 
   return {
-    destroy
+    destroy,
+    get currentScale() { return pdfViewer.currentScale },
+    get currentScaleValue() { return pdfViewer.currentScaleValue }
   }
 
 });

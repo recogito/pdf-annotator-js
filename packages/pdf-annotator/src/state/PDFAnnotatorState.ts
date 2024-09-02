@@ -63,9 +63,6 @@ export const createPDFAnnotatorState = (
     const created = (changes.created || []);
     const updated = (changes.updated || []);
 
-    created.forEach(() => console.log('created'));
-    updated.forEach(() => console.log('updated'));
-
     // TODO for testing only
     const toCrosswalk = updated.map(u => u.newValue);
     
@@ -75,7 +72,7 @@ export const createPDFAnnotatorState = (
 
       const rects = innerStore.getAnnotationRects(a.id);
       const quadpoints = getQuadPoints(rects, page);
-      // console.log(quadpoints);
+      console.log(quadpoints);
     })
 
   });

@@ -35,8 +35,6 @@ export const createPDFAnnotator = (
   pdfURL: string,
   options: TextAnnotatorOptions<PDFAnnotation> = {}
 ) => createPDFViewer(container, pdfURL).then(pdfViewer => {
-  console.log(pdfViewer);
-  
   const opts = fillDefaults<PDFAnnotation>(options, {
     annotatingEnabled: true
   });

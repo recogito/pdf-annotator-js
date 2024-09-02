@@ -5,6 +5,12 @@ import {
   createSpansRenderer,
   SelectionHandler
 } from '@recogito/text-annotator';
+import { 
+  createBaseAnnotator, 
+  createLifecycleObserver, 
+  createUndoStack, 
+  User 
+} from '@annotorious/core';
 import { addResizeObserver } from './responsive';
 import type { PDFScale } from './PDFScale';
 import { PDFAnnotation } from './PDFAnnotation';
@@ -13,8 +19,6 @@ import { createPDFAnnotatorState } from './state/PDFAnnotatorState';
 
 import './PDFAnnotator.css';
 import '@recogito/text-annotator/dist/text-annotator.css';
-import { createLifecycleObserver, createUndoStack, User } from '@annotorious/core';
-import { createAPI } from './api';
 
 export interface PDFAnnotator extends TextAnnotator<PDFAnnotation> {
 
@@ -41,9 +45,9 @@ export const createPDFAnnotator = (
 
   const state = createPDFAnnotatorState(container, opts, pdfViewer); 
 
-  const { hover, selection, store, viewport } = state;
+  const { store, viewport } = state;
 
-  const undoStack = createUndoStack(store);
+  const undoStack = createUndoStack<PDFAnnotation>(store);
 
   // @ts-ignore
   const lifecycle = createLifecycleObserver<PDFAnnotation, PDFAnnotation>(state, undoStack, opts.adapter);
@@ -63,18 +67,9 @@ export const createPDFAnnotator = (
   );
   selectionHandler.setUser(currentUser);
 
-  /*
-
-  const pdfAnnotator = {
-    ...anno,
-    get currentScale() { return pdfViewer.currentScale },
-    get currentScaleValue() { return pdfViewer.currentScaleValue },
-    ...createAPI(anno, pdfViewer)
-  }
-  */
-
   // pdfViewer.eventBus.on('textlayerrendered', ({ pageNumber }: { pageNumber: number }) =>
   //   store.onLazyRender(pageNumber));
+
   const removeResizeObserver = addResizeObserver(container, () => {
     const { currentScaleValue } = pdfViewer;
     if (
@@ -89,14 +84,33 @@ export const createPDFAnnotator = (
     pdfViewer.update();
   });
 
+  /*************************/
+  /*      External API     */
+  /******++++++*************/
+
+  // Most of the external API functions are covered in the base annotator
+  const base = createBaseAnnotator<PDFAnnotation, PDFAnnotation>(state, undoStack);
+
+  const getUser = () => currentUser;
+
   const destroy = () => {
     removeResizeObserver();
   }
 
+  const setUser = (user: User) => {
+    currentUser = user;
+    selectionHandler.setUser(user);
+  }
+
   return {
-    destroy,
+    ...base,
     get currentScale() { return pdfViewer.currentScale },
-    get currentScaleValue() { return pdfViewer.currentScaleValue }
+    get currentScaleValue() { return pdfViewer.currentScaleValue },
+    destroy,
+    getUser,
+    setUser,
+    on: lifecycle.on,
+    off: lifecycle.off
   }
 
 });

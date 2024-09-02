@@ -16,4 +16,6 @@ export interface PDFSelector extends TextSelector {
 
   pageNumber: number;
 
+  quadpoints: number[];
+
 }

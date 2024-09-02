@@ -1,24 +1,30 @@
 import * as pdfjsViewer from 'pdfjs-dist/legacy/web/pdf_viewer.mjs';
 import { 
-  AnnotatorState, 
   createTextAnnotatorState, 
   HoverState, 
+  Origin, 
   SelectionState, 
-  TextAnnotatorOptions
+  TextAnnotation, 
+  TextAnnotationStore, 
+  TextAnnotationTarget, 
+  TextAnnotatorOptions,
+  TextAnnotatorState,
+  TextSelector
 } from '@recogito/text-annotator';
+import { shouldNotify } from '@annotorious/core';
 import type { 
   StoreChangeEvent, 
-  StoreObserver, 
   StoreObserveOptions, 
-  ViewportState 
+  StoreObserver, 
+  ViewportState, 
+  Update,
 } from '@annotorious/core';
-import { PDFAnnotation } from '../PDFAnnotation';
-import { PDFAnnotationStore } from './PDFAnnotationStore';
+import { PDFAnnotation, PDFAnnotationTarget } from '../PDFAnnotation';
 import { getQuadPoints } from './getQuadPoints';
 
-export interface PDFAnnotatorState extends AnnotatorState<PDFAnnotation> {
+export interface PDFAnnotatorState extends TextAnnotatorState<PDFAnnotation> {
 
-  store: PDFAnnotationStore;
+  store: TextAnnotationStore<PDFAnnotation>;
 
   selection: SelectionState<PDFAnnotation>;
 
@@ -32,7 +38,7 @@ export const createPDFAnnotatorState = (
   container: HTMLDivElement, 
   opts: TextAnnotatorOptions<PDFAnnotation>,
   viewer: pdfjsViewer.PDFViewer
-) => {
+): PDFAnnotatorState => {
 
   // The 'inner' text annotator
   const { store: innerStore, selection, hover, viewport } = createTextAnnotatorState(container.querySelector('.pdfViewer'), opts.userSelectAction);
@@ -50,36 +56,85 @@ export const createPDFAnnotatorState = (
 
   const emit = (event: StoreChangeEvent<PDFAnnotation>) => {
     observers.forEach(observer => {
-      // if (shouldNotify(observer, event))
-      observer.onChange(event);
+      if (shouldNotify(observer, event))
+        observer.onChange(event);
     });
   }
+
+  const toPDFAnnotationTarget = (target: TextAnnotationTarget) => {
+    const rects = innerStore.getAnnotationRects(target.annotation);
+
+    const toPDFSelector = (s: TextSelector) => {
+      const pageNumber = parseInt(s.offsetReference.dataset.pageNumber);
+      return {
+        ...s,
+        pageNumber,
+        quadpoints: getQuadPoints(rects, viewer.getPageView(pageNumber - 1))
+      }
+    }
+
+    return {
+      ...target,
+      selector: target.selector.map(toPDFSelector)
+    } as PDFAnnotationTarget;
+  }
+
+  const toPDFAnnotation = (t: TextAnnotation) => ({
+    ...t,
+    target: toPDFAnnotationTarget(t.target)
+  });
 
   innerStore.observe(event => {
     const { changes } = event;
 
     // Annotations coming from the innerStore or all TextAnnotations!
-    // const deleted = (changes.deleted || []);
-    const created = (changes.created || []);
-    const updated = (changes.updated || []);
+    const created: PDFAnnotation[] = (changes.created || []).map(toPDFAnnotation);
+    created.forEach(a => innerStore.updateAnnotation(a, Origin.REMOTE));
 
-    // TODO for testing only
-    const toCrosswalk = updated.map(u => u.newValue);
-    
-    toCrosswalk.forEach(a => {
-      // TODO how do we know the page number!?
-      const page = viewer.getPageView(0);
+    const updated = (changes.updated || []).map(e => {
+      if (e.targetUpdated) {
+        const newTarget = toPDFAnnotationTarget(e.targetUpdated.newTarget as TextAnnotationTarget);
+        const oldValue: PDFAnnotation = toPDFAnnotation(e.oldValue);
 
-      const rects = innerStore.getAnnotationRects(a.id);
-      const quadpoints = getQuadPoints(rects, page);
-      console.log(quadpoints);
-    })
+        const newValue: PDFAnnotation = {
+          ...e.newValue,
+          target: newTarget
+        };
 
-  });
+        return {
+          ...e,
+          oldValue,
+          newValue,
+          targetUpdated: e.targetUpdated ? ({
+            oldTarget: oldValue.target,
+            newTarget: newValue.target
+          }) : undefined
+        } as Update<PDFAnnotation>;
+      } else {
+        return e as Update<PDFAnnotation>
+      }
+    });
+
+    updated.forEach(u => innerStore.updateAnnotation(u.newValue, Origin.REMOTE));
+
+    const deleted: PDFAnnotation[] = (changes.deleted || []).map(toPDFAnnotation);
+
+    const crosswalked = {
+      ...event,
+      changes: {
+        created,
+        updated,
+        deleted
+      }
+    } as StoreChangeEvent<PDFAnnotation>;
+
+    emit(crosswalked);
+  }, { origin: Origin.LOCAL });
 
   return {
     hover,
     selection,
+    // @ts-ignore TEMPORARY!
     store: { 
       ...innerStore,
       observe,

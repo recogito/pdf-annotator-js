@@ -41,6 +41,7 @@ const reviveSelector = (selector: PDFSelector | TextSelector): PDFSelector => {
       const { offsetReference } = selector;
       const pageNumber = parseInt(offsetReference.dataset.pageNumber);
     
+      // @ts-ignore
       return {
         ...selector,
         pageNumber 

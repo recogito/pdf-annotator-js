@@ -6,9 +6,17 @@ import {
   SelectionState, 
   TextAnnotatorOptions
 } from '@recogito/text-annotator';
-import { ViewportState } from '@annotorious/core';
+import type { 
+  ChangeSet,
+  Origin,
+  StoreChangeEvent, 
+  StoreObserver, 
+  StoreObserveOptions, 
+  ViewportState 
+} from '@annotorious/core';
 import { PDFAnnotation } from '../PDFAnnotation';
 import { PDFAnnotationStore } from './PDFAnnotationStore';
+import { getQuadPoints } from './getQuadPoints';
 
 export interface PDFAnnotatorState extends AnnotatorState<PDFAnnotation> {
 
@@ -29,7 +37,60 @@ export const createPDFAnnotatorState = (
 ) => {
 
   // The 'inner' text annotator
-  const inner = createTextAnnotatorState(container, opts.userSelectAction);
+  const { store: innerStore, selection, hover, viewport } = createTextAnnotatorState(container, opts.userSelectAction);
 
+  const observers: StoreObserver<PDFAnnotation>[] = [];
+
+  const observe = (onChange: { (event: StoreChangeEvent<PDFAnnotation>): void }, options: StoreObserveOptions = {}) =>
+    observers.push({ onChange, options });
+
+  const unobserve = (onChange: { (event: StoreChangeEvent<PDFAnnotation>): void }) => {
+    const idx = observers.findIndex(observer => observer.onChange == onChange);
+    if (idx > -1)
+      observers.splice(idx, 1);
+  }
+
+  const emit = (event: StoreChangeEvent<PDFAnnotation>) => {
+    observers.forEach(observer => {
+      // if (shouldNotify(observer, event))
+      observer.onChange(event);
+    });
+  }
+
+  innerStore.observe(event => {
+    const { changes } = event;
+
+    // Annotations coming from the innerStore or all TextAnnotations!
+    // const deleted = (changes.deleted || []);
+    const created = (changes.created || []);
+    const updated = (changes.updated || []);
+
+    // Compute quadpoints for created and updated annotations
+    console.log('created', created);
+    console.log('updated', updated);
+
+    const toCrosswalk = updated.map(u => u.newValue);
+    
+    toCrosswalk.forEach(a => {
+      // TODO how do we know the page number!?
+      const page = viewer.getPageView(0);
+
+      const rects = innerStore.getAnnotationRects(a.id);
+      const quadpoints = getQuadPoints(rects, page);
+      console.log(quadpoints);
+    })
+
+  });
+
+  return {
+    hover,
+    selection,
+    store: { 
+      ...innerStore,
+      observe,
+      unobserve
+    },
+    viewport
+  }
   
 }

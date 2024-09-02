@@ -39,7 +39,8 @@
     "vite-plugin-dts": "^4.1.0"
   },
   "dependencies": {
-    "@recogito/text-annotator": "^3.0.0-rc.44",
+    "@annotorious/core": "^3.0.2",
+    "@recogito/text-annotator": "file:../../../text-annotator/packages/text-annotator",
     "pdfjs-dist": "4.6.82"
   }
 }

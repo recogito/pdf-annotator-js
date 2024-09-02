@@ -54,7 +54,7 @@ export const createPDFAnnotator = (
 
   let currentUser: User = opts.user;
 
-  const highlightRenderer = createSpansRenderer(container, state, viewport);
+  const highlightRenderer = createSpansRenderer(viewerElement, state, viewport);
 
   if (opts.style)
     highlightRenderer.setStyle(opts.style);

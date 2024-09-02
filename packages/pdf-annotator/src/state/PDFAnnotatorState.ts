@@ -21,6 +21,7 @@ import type {
 import { PDFAnnotation, PDFAnnotationTarget } from '../PDFAnnotation';
 import { getQuadPoints, reviveAnnotation, reviveTarget } from './utils';
 import { PDFAnnotationStore } from './PDFAnnotationStore';
+import { createRenderedAnnotationsMap } from './renderedAnnotations';
 
 export interface PDFAnnotatorState extends TextAnnotatorState<PDFAnnotation> {
 
@@ -39,6 +40,8 @@ export const createPDFAnnotatorState = (
   viewerElement: HTMLDivElement, 
   opts: TextAnnotatorOptions<PDFAnnotation>
 ): PDFAnnotatorState => {
+
+  const renderedAnnotations = createRenderedAnnotationsMap();
 
   // The 'inner' text annotator
   const { store: innerStore, selection, hover, viewport } = createTextAnnotatorState(viewerElement, opts.userSelectAction);
@@ -92,7 +95,7 @@ export const createPDFAnnotatorState = (
     const revived = reviveAnnotation(annotation);
 
     const success = innerStore.addAnnotation(revived, origin);
-    // upsertRenderedAnnotation(revived);
+    renderedAnnotations.upsert(revived);
 
     return success;
   }
@@ -103,11 +106,9 @@ export const createPDFAnnotatorState = (
     origin = Origin.LOCAL
   ) => {
     const revived = annotations.map(reviveAnnotation);
+    revived.forEach(a => renderedAnnotations.upsert(a));
 
-    const failed = innerStore.bulkAddAnnotation(revived, replace, origin) as PDFAnnotation[];
-    // revived.forEach(upsertRenderedAnnotation);
-
-    return failed;
+    return innerStore.bulkAddAnnotation(revived, replace, origin) as PDFAnnotation[];
   }
 
   const updateAnnotation = (annotation: PDFAnnotation, origin = Origin.LOCAL) => {
@@ -115,7 +116,7 @@ export const createPDFAnnotatorState = (
     
     innerStore.updateAnnotation(revived, origin);
 
-    // upsertRenderedAnnotation(revived);
+    renderedAnnotations.upsert(revived);
   }
 
   const updateTarget = (target: PDFAnnotationTarget, origin = Origin.LOCAL) => {
@@ -123,23 +124,20 @@ export const createPDFAnnotatorState = (
 
     innerStore.updateTarget(revived, origin);
 
-    // updateRenderedTarget(revived);
+    renderedAnnotations.updateTarget(revived);
   }
 
   // Callback method for when a new page gets rendered by PDF.js
   const onLazyRender = (page: number) => {   
-    console.log('onLazyRender ' + page); 
-    /*
     const pages = [page - 2, page - 1, page, page + 1, page + 2].filter(n => n >= 0);
     
     const toRender = pages.reduce<PDFAnnotation[]>((annotations, page) => (
-      [...annotations, ...(rendered.get(page) || [])]
-    ), []).map(({ id }) => store.getAnnotation(id));
+      [...annotations, ...(renderedAnnotations.get(page) || [])]
+    ), []).map(({ id }) => innerStore.getAnnotation(id));
 
     if (toRender.length > 0)
       // Attempt to update the unrendered annotations in the store      
-      store.bulkUpsertAnnotations(toRender, Origin.REMOTE);
-    */
+      innerStore.bulkUpsertAnnotations(toRender, Origin.REMOTE);
   }  
 
   innerStore.observe(event => {
@@ -200,7 +198,8 @@ export const createPDFAnnotatorState = (
       observe,
       onLazyRender,
       unobserve,
-      updateAnnotation
+      updateAnnotation,
+      updateTarget
     },
     viewport,
 

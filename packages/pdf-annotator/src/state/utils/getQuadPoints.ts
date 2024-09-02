@@ -21,7 +21,8 @@ const clientPointToPDFPoint = (pt: Point, page: pdfjsViewer.PDFPageView): Point 
   const pdfX = width * offsetX / offsetWidth / scale;
   const pdfY = height * bottom / offsetHeight / scale;
 
-  return { x: pdfX, y: pdfY };
+  const round = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
+  return { x: round(pdfX), y: round(pdfY) };
 }
 
 const rectToQuadPoints = (rect: DOMRect, page: pdfjsViewer.PDFPageView) => {

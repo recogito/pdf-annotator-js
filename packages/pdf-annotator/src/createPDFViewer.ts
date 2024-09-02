@@ -43,13 +43,13 @@ export const addResizeObserver = (container: HTMLDivElement, callback: () => voi
 export const createPDFViewer = (
   container: HTMLDivElement,
   pdfURL: string,
-) => new Promise<pdfjsViewer.PDFViewer>((resolve, reject) => {
+) => new Promise<{ viewer: pdfjsViewer.PDFViewer, viewerElement: HTMLDivElement }>((resolve, reject) => {
   // Container needs a DIV child - cf:
   // https://github.com/mozilla/pdf.js/blob/master/examples/components/simpleviewer.html
-  const viewerContainer = document.createElement('div');
-  viewerContainer.className = 'pdfViewer';
+  const viewerElement = document.createElement('div');
+  viewerElement.className = 'pdfViewer';
 
-  container.appendChild(viewerContainer);
+  container.appendChild(viewerElement);
 
   const eventBus = new pdfjsViewer.EventBus();
 
@@ -62,14 +62,14 @@ export const createPDFViewer = (
     linkService: pdfLinkService,
   });
 
-  const pdfViewer = new pdfjsViewer.PDFViewer({
+  const viewer = new pdfjsViewer.PDFViewer({
     container,
     eventBus,
     linkService: pdfLinkService,
     findController: pdfFindController
   });
 
-  pdfLinkService.setViewer(pdfViewer);
+  pdfLinkService.setViewer(viewer);
 
   pdfjsLib.getDocument({
     url: pdfURL,
@@ -77,21 +77,20 @@ export const createPDFViewer = (
     cMapPacked: CMAP_PACKED,
     enableXfa: ENABLE_XFA
   }).promise.then(pdfDocument => {
-    pdfViewer.setDocument(pdfDocument);
+    viewer.setDocument(pdfDocument);
     pdfLinkService.setDocument(pdfDocument);
   }).catch(error => reject(error));
 
   eventBus.on('pagesinit', () => {    
     // Default to scale = auto
-    pdfViewer.currentScaleValue = 'auto';
+    viewer.currentScaleValue = 'auto';
 
     // Listen to the first 'textlayerrendered' event (once)
     const onInit = () => {
-      resolve(pdfViewer);
+      resolve({ viewer, viewerElement });
       eventBus.off('textlayerrendered', onInit);
     }
 
     eventBus.on('textlayerrendered', onInit);  
   });
-
 });

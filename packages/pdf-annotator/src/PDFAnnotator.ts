@@ -38,12 +38,12 @@ export const createPDFAnnotator = (
   container: HTMLDivElement, 
   pdfURL: string,
   options: TextAnnotatorOptions<PDFAnnotation> = {}
-) => createPDFViewer(container, pdfURL).then(pdfViewer => {
+) => createPDFViewer(container, pdfURL).then(({ viewer, viewerElement }) => {
   const opts = fillDefaults<PDFAnnotation>(options, {
     annotatingEnabled: true
   });
 
-  const state = createPDFAnnotatorState(container, opts, pdfViewer); 
+  const state = createPDFAnnotatorState(viewer, viewerElement, opts); 
 
   const { store, viewport } = state;
 
@@ -71,17 +71,17 @@ export const createPDFAnnotator = (
   //   store.onLazyRender(pageNumber));
 
   const removeResizeObserver = addResizeObserver(container, () => {
-    const { currentScaleValue } = pdfViewer;
+    const { currentScaleValue } = viewer;
     if (
       currentScaleValue === 'auto' ||
       currentScaleValue === 'page-fit' ||
       currentScaleValue === 'page-width'
     ) {
       // Refresh size
-      pdfViewer.currentScaleValue = currentScaleValue;
+      viewer.currentScaleValue = currentScaleValue;
     }
 
-    pdfViewer.update();
+    viewer.update();
   });
 
   /*************************/
@@ -104,8 +104,8 @@ export const createPDFAnnotator = (
 
   return {
     ...base,
-    get currentScale() { return pdfViewer.currentScale },
-    get currentScaleValue() { return pdfViewer.currentScaleValue },
+    get currentScale() { return viewer.currentScale },
+    get currentScaleValue() { return viewer.currentScaleValue },
     destroy,
     getUser,
     setUser,

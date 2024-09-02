@@ -20,7 +20,7 @@ import type {
   Update,
 } from '@annotorious/core';
 import { PDFAnnotation, PDFAnnotationTarget } from '../PDFAnnotation';
-import { getQuadPoints } from './getQuadPoints';
+import { getQuadPoints, reviveAnnotation} from './utils';
 
 export interface PDFAnnotatorState extends TextAnnotatorState<PDFAnnotation> {
 
@@ -35,13 +35,13 @@ export interface PDFAnnotatorState extends TextAnnotatorState<PDFAnnotation> {
 }
 
 export const createPDFAnnotatorState = (
-  container: HTMLDivElement, 
-  opts: TextAnnotatorOptions<PDFAnnotation>,
-  viewer: pdfjsViewer.PDFViewer
+  viewer: pdfjsViewer.PDFViewer,
+  viewerElement: HTMLDivElement, 
+  opts: TextAnnotatorOptions<PDFAnnotation>
 ): PDFAnnotatorState => {
 
   // The 'inner' text annotator
-  const { store: innerStore, selection, hover, viewport } = createTextAnnotatorState(container.querySelector('.pdfViewer'), opts.userSelectAction);
+  const { store: innerStore, selection, hover, viewport } = createTextAnnotatorState(viewerElement, opts.userSelectAction);
 
   const observers: StoreObserver<PDFAnnotation>[] = [];
 
@@ -83,6 +83,19 @@ export const createPDFAnnotatorState = (
     ...t,
     target: toPDFAnnotationTarget(t.target)
   });
+
+  const bulkAddAnnotation = (
+    annotations: PDFAnnotation[], 
+    replace: boolean,
+    origin = Origin.LOCAL
+  ) => {
+    const revived = annotations.map(reviveAnnotation);
+
+    const failed = innerStore.bulkAddAnnotation(revived, replace, origin) as PDFAnnotation[];
+    // revived.forEach(upsertRenderedAnnotation);
+
+    return failed;
+  }
 
   innerStore.observe(event => {
     const { changes } = event;
@@ -137,6 +150,7 @@ export const createPDFAnnotatorState = (
     // @ts-ignore TEMPORARY!
     store: { 
       ...innerStore,
+      bulkAddAnnotation,
       observe,
       unobserve
     },

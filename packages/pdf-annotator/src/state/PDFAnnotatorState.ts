@@ -212,7 +212,7 @@ export const createPDFAnnotatorState = (
     } as StoreChangeEvent<PDFAnnotation>;
     
     emit(crosswalked);
-  });
+  }, { origin: Origin.LOCAL });
 
   return {
     hover,

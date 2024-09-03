@@ -167,7 +167,10 @@ export const createPDFAnnotatorState = (
 
     // Annotations coming from the innerStore or all TextAnnotations!
     const created: PDFAnnotation[] = (changes.created || []).map(toPDFAnnotation);
-    created.forEach(a => innerStore.updateAnnotation(a, Origin.REMOTE));
+
+    // Update the store silently, i.e. without triggering events
+    // @ts-ignore
+    created.forEach(a => innerStore.updateAnnotation(a, Origin.SILENT));
 
     const updated = (changes.updated || []).map(e => {
       if (e.targetUpdated) {
@@ -193,7 +196,9 @@ export const createPDFAnnotatorState = (
       }
     });
 
-    updated.forEach(u => innerStore.updateAnnotation(u.newValue, Origin.REMOTE));
+    // Update silently
+    // @ts-ignore
+    updated.forEach(u => innerStore.updateAnnotation(u.newValue, Origin.SILENT));
 
     const deleted: PDFAnnotation[] = (changes.deleted || []).map(toPDFAnnotation);
 
@@ -205,9 +210,9 @@ export const createPDFAnnotatorState = (
         deleted
       }
     } as StoreChangeEvent<PDFAnnotation>;
-
+    
     emit(crosswalked);
-  }, { origin: Origin.LOCAL });
+  });
 
   return {
     hover,

@@ -1,12 +1,12 @@
 import { ReactNode, useContext, useEffect, useRef } from 'react';
 import { AnnotoriousContext } from '@annotorious/react';
 import { Filter, TextAnnotatorOptions, HighlightStyleExpression } from '@recogito/text-annotator';
-import { createPDFAnnotator, PDFAnnotator as VanillaPDFAnnotator, PDFScale } from '@recogito/pdf-annotator';
+import { createPDFAnnotator, PDFAnnotator as VanillaPDFAnnotator, PDFScale, PDFAnnotation } from '@recogito/pdf-annotator';
 
 import '@recogito/pdf-annotator/pdf-anntator.css';
 import './PDFAnnotator.css';
 
-export type PDFAnnotatorProps<E extends unknown> = TextAnnotatorOptions<E> & {
+export type PDFAnnotatorProps = TextAnnotatorOptions<PDFAnnotation, PDFAnnotation> & {
 
   children?: ReactNode | JSX.Element;
 
@@ -22,7 +22,7 @@ export type PDFAnnotatorProps<E extends unknown> = TextAnnotatorOptions<E> & {
 
 }
 
-export const PDFAnnotator = <E extends unknown>(props: PDFAnnotatorProps<E>) => {
+export const PDFAnnotator = (props: PDFAnnotatorProps) => {
 
   const { children, style, pdfUrl, ...opts } = props;
 

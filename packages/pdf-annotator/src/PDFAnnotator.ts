@@ -3,7 +3,8 @@ import {
   TextAnnotator, 
   fillDefaults,
   createSpansRenderer,
-  SelectionHandler
+  SelectionHandler,
+  HighlightStyleExpression
 } from '@recogito/text-annotator';
 import { 
   createBaseAnnotator, 
@@ -22,11 +23,15 @@ import '@recogito/text-annotator/dist/text-annotator.css';
 
 export interface PDFAnnotator extends TextAnnotator<PDFAnnotation> {
 
+  element: HTMLElement;
+
   currentScale: number;
 
   currentScaleValue: string | undefined;
 
   setScale(scale: PDFScale | number): number;
+
+  setStyle(style: HighlightStyleExpression | undefined): void;
 
   zoomIn(percentage?: number): number;
 
@@ -37,9 +42,9 @@ export interface PDFAnnotator extends TextAnnotator<PDFAnnotation> {
 export const createPDFAnnotator = (
   container: HTMLDivElement, 
   pdfURL: string,
-  options: TextAnnotatorOptions<PDFAnnotation> = {}
+  options: TextAnnotatorOptions<PDFAnnotation, PDFAnnotation> = {}
 ) => createPDFViewer(container, pdfURL).then(({ viewer, viewerElement }) => {
-  const opts = fillDefaults<PDFAnnotation>(options, {
+  const opts = fillDefaults<PDFAnnotation, PDFAnnotation>(options, {
     annotatingEnabled: true
   });
 
@@ -97,6 +102,9 @@ export const createPDFAnnotator = (
     removeResizeObserver();
   }
 
+  const setStyle = (style: HighlightStyleExpression | undefined) =>
+    highlightRenderer.setStyle(style);
+
   const setUser = (user: User) => {
     currentUser = user;
     selectionHandler.setUser(user);
@@ -104,10 +112,12 @@ export const createPDFAnnotator = (
 
   return {
     ...base,
+    element: viewerElement,
     get currentScale() { return viewer.currentScale },
     get currentScaleValue() { return viewer.currentScaleValue },
     destroy,
     getUser,
+    setStyle,
     setUser,
     on: lifecycle.on,
     off: lifecycle.off

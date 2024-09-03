@@ -22,6 +22,7 @@ import { PDFAnnotation, PDFAnnotationTarget } from '../PDFAnnotation';
 import { getQuadPoints, reviveAnnotation, reviveTarget } from './utils';
 import { PDFAnnotationStore } from './PDFAnnotationStore';
 import { createRenderedAnnotationsMap } from './renderedAnnotations';
+import { splitSelector } from './utils/splitSelector';
 
 export interface PDFAnnotatorState extends TextAnnotatorState<PDFAnnotation> {
 
@@ -64,21 +65,42 @@ export const createPDFAnnotatorState = (
     });
   }
 
-  const toPDFAnnotationTarget = (target: TextAnnotationTarget) => {
+  const toPDFAnnotationTarget = (target: TextAnnotationTarget) => {    
+    // Split the text annotation target across pages, if necessary.
+    const split = target.selector.reduce<TextSelector[]>((all, selector) => (
+      [...all, ...splitSelector(target.selector[0])]
+    ), []);
+
+    // CAUTION: some annotations seem to be re-split. Investigate! 
+
+    // All rects, for all selectors
     const rects = innerStore.getAnnotationRects(target.annotation);
+
+    // Container element bounds
+    const offset = viewerElement.getBoundingClientRect().top;
+
+    const getRectsForSelector = (selector: TextSelector) => {
+      const bounds = selector.range.getBoundingClientRect();
+
+      // Checking for vertical intersection is enough, because we know
+      // we're splitting by pages
+      return rects.filter(r => (
+        r.top + offset <= bounds.bottom && r.bottom + offset >= bounds.top
+      ));
+    }
 
     const toPDFSelector = (s: TextSelector) => {
       const pageNumber = parseInt(s.offsetReference.dataset.pageNumber);
       return {
         ...s,
         pageNumber,
-        quadpoints: getQuadPoints(rects, viewer.getPageView(pageNumber - 1))
+        quadpoints: getQuadPoints(getRectsForSelector(s), viewer.getPageView(pageNumber - 1), viewerElement)
       }
     }
 
     return {
       ...target,
-      selector: target.selector.map(toPDFSelector)
+      selector: split.map(toPDFSelector)
     } as PDFAnnotationTarget;
   }
 

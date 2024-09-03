@@ -2,15 +2,21 @@ import * as pdfjsViewer from 'pdfjs-dist/legacy/web/pdf_viewer.mjs';
 
 interface Point { x: number, y: number };
 
-const clientPointToPDFPoint = (pt: Point, page: pdfjsViewer.PDFPageView): Point => {
+const clientPointToPDFPoint = (pt: Point, page: pdfjsViewer.PDFPageView, viewerElement: HTMLDivElement): Point => {
+  // Points y is relative to viewerElement!
   const { canvas } = page;
 
-  const { left, top } = canvas.getBoundingClientRect();
+  const viewerElementBounds = viewerElement.getBoundingClientRect();
+  const canvasBounds = canvas.getBoundingClientRect();
 
-  const { offsetWidth, offsetHeight } = canvas;
+  const canvasOffsetY = canvasBounds.top - viewerElementBounds.top;
+  const canvasOffsetX = canvasBounds.left - viewerElementBounds.left;
+  const canvasWidth = canvas.offsetWidth;
+  const canvasHeight = canvas.offsetHeight;
 
-  const offsetX = pt.x - left;
-  const offsetY = pt.y - top;
+  // Point XY in pixels, relative to canvas
+  const offsetX = pt.x - canvasOffsetX;
+  const offsetY = pt.y - canvasOffsetY;
 
   // PDF viewport height, width and scale
   const { height, width, scale } = page.viewport;
@@ -18,26 +24,26 @@ const clientPointToPDFPoint = (pt: Point, page: pdfjsViewer.PDFPageView): Point 
   // Canvas and PDF coords are flipped in Y axis
   const bottom = canvas.offsetHeight - offsetY;
 
-  const pdfX = width * offsetX / offsetWidth / scale;
-  const pdfY = height * bottom / offsetHeight / scale;
+  const pdfX = width * offsetX / canvasWidth / scale;
+  const pdfY = height * bottom / canvasHeight / scale;
 
   const round = (num: number) => Math.round((num + Number.EPSILON) * 100) / 100;
   return { x: round(pdfX), y: round(pdfY) };
 }
 
-const rectToQuadPoints = (rect: DOMRect, page: pdfjsViewer.PDFPageView) => {
+const rectToQuadPoints = (rect: DOMRect, page: pdfjsViewer.PDFPageView, viewerElement: HTMLDivElement) => {
   // QuadPoint-compliant: starting bottom-left, counter-clockwise.
   const p1 = { x: rect.left, y: rect.bottom };
   const p2 = { x: rect.right, y: rect.bottom };
   const p3 = { x: rect.right, y: rect.top };
   const p4 = { x: rect.left, y: rect.top };
 
-  const pdfPoints = [p1, p2, p3, p4].map(pt => clientPointToPDFPoint(pt, page));
+  const pdfPoints = [p1, p2, p3, p4].map(pt => clientPointToPDFPoint(pt, page, viewerElement));
 
   return pdfPoints.reduce<number[]>((qp, point) => {
     return [...qp, point.x, point.y];
   },[]);
 }
 
-export const getQuadPoints = (rects: DOMRect[], page: pdfjsViewer.PDFPageView) =>
-  rects.reduce<number[]>((qp, rect) => [...qp, ...rectToQuadPoints(rect, page)], []);
+export const getQuadPoints = (rects: DOMRect[], page: pdfjsViewer.PDFPageView, viewerElement: HTMLDivElement) =>
+  rects.reduce<number[]>((qp, rect) => [...qp, ...rectToQuadPoints(rect, page, viewerElement)], []);

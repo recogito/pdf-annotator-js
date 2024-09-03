@@ -1,16 +1,19 @@
 import { 
-  TextAnnotatorOptions, 
-  TextAnnotator, 
-  fillDefaults,
+  createPresencePainter,
   createSpansRenderer,
+  fillDefaults,
+  HighlightStyleExpression,
   SelectionHandler,
-  HighlightStyleExpression
+  TextAnnotator, 
+  TextAnnotatorOptions
 } from '@recogito/text-annotator';
+import {  } from '@recogito/text-annotator';
 import { 
   createBaseAnnotator, 
   createLifecycleObserver, 
   createUndoStack, 
   Filter, 
+  PresenceProvider, 
   User 
 } from '@annotorious/core';
 import { addResizeObserver } from './responsive';
@@ -58,7 +61,7 @@ export const createPDFAnnotator = (
 
   const state = createPDFAnnotatorState(viewer, viewerElement, opts); 
 
-  const { store, viewport } = state;
+  const { store, viewport, selection } = state;
 
   const undoStack = createUndoStack<PDFAnnotation>(store);
 
@@ -108,6 +111,11 @@ export const createPDFAnnotator = (
 
   const destroy = () => {
     removeResizeObserver();
+
+    highlightRenderer.destroy();
+    selectionHandler.destroy();
+    
+    undoStack.destroy();
   }
 
   const scrollIntoView = (annotation: PDFAnnotation) => {
@@ -120,7 +128,22 @@ export const createPDFAnnotator = (
     selectionHandler.setFilter(filter);
   }
 
+  const setPresenceProvider = (provider: PresenceProvider) => {
+    if (provider) {
+      highlightRenderer.setPainter(createPresencePainter(provider, opts.presence));
+      provider.on('selectionChange', () => highlightRenderer.redraw());
+    }
+  }
+
   const setScale = _setScale(viewer);
+
+  const setSelected = (arg?: string | string[]) => {
+    if (arg) {
+      selection.setSelected(arg);
+    } else {
+      selection.clear();
+    }
+  }
 
   const setStyle = (style: HighlightStyleExpression | undefined) =>
     highlightRenderer.setStyle(style);
@@ -147,7 +170,9 @@ export const createPDFAnnotator = (
     on: lifecycle.on,
     off: lifecycle.off,
     setFilter,
+    setPresenceProvider,
     setScale,
+    setSelected,
     setStyle,
     setUser,
     setVisible,

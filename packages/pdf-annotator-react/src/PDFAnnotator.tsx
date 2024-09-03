@@ -33,6 +33,7 @@ export const PDFAnnotator = (props: PDFAnnotatorProps) => {
   useEffect(() => {    
     createPDFAnnotator(el.current, pdfUrl, opts)
       .then(anno => {
+        
         anno.setStyle(props.style);
         setAnno(anno);
 

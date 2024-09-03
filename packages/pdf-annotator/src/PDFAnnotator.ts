@@ -120,7 +120,8 @@ export const createPDFAnnotator = (
     setStyle,
     setUser,
     on: lifecycle.on,
-    off: lifecycle.off
+    off: lifecycle.off,
+    state
   }
 
 });

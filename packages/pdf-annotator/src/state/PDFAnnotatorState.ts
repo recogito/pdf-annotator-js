@@ -172,7 +172,7 @@ export const createPDFAnnotatorState = (
     const updated = (changes.updated || []).map(e => {
       if (e.targetUpdated) {
         const newTarget = toPDFAnnotationTarget(e.targetUpdated.newTarget as TextAnnotationTarget);
-        const oldValue: PDFAnnotation = toPDFAnnotation(e.oldValue);
+        const oldValue: PDFAnnotation = e.oldValue as PDFAnnotation;
 
         const newValue: PDFAnnotation = {
           ...e.newValue,

@@ -55,7 +55,8 @@ export const splitSelector = (selector: TextSelector): TextSelector[] => {
       pageRange.selectNodeContents(currentPage);
     }
 
-    ranges.push(pageRange);
+    if (!pageRange.collapsed)
+      ranges.push(pageRange);
 
     if (currentPage === endPage) {
       currentPage = undefined;

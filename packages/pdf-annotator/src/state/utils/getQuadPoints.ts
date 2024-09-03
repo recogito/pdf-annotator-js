@@ -32,11 +32,14 @@ const clientPointToPDFPoint = (pt: Point, page: pdfjsViewer.PDFPageView, viewerE
 }
 
 const rectToQuadPoints = (rect: DOMRect, page: pdfjsViewer.PDFPageView, viewerElement: HTMLDivElement) => {
-  // QuadPoint-compliant: starting bottom-left, counter-clockwise.
+  // QuadPoint-compliant. The (Adobe) spec says: starting bottom-left, counter-clockwise.
+  // The (Adobe) implementation does: bottom-left, bottom-right, top-left, top-right. Yay.
+  // https://github.com/highkite/pdfAnnotate?tab=readme-ov-file#quadpoints
+  // https://stackoverflow.com/questions/9855814/pdf-spec-vs-acrobat-creation-quadpoints
   const p1 = { x: rect.left, y: rect.bottom };
   const p2 = { x: rect.right, y: rect.bottom };
-  const p3 = { x: rect.right, y: rect.top };
-  const p4 = { x: rect.left, y: rect.top };
+  const p3 = { x: rect.left, y: rect.top };
+  const p4 = { x: rect.right, y: rect.top };
 
   const pdfPoints = [p1, p2, p3, p4].map(pt => clientPointToPDFPoint(pt, page, viewerElement));
 

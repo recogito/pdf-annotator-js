@@ -20,11 +20,12 @@ import { addResizeObserver } from './responsive';
 import type { PDFScale } from './PDFScale';
 import { PDFAnnotation } from './PDFAnnotation';
 import { createPDFViewer } from './createPDFViewer';
-import { createPDFAnnotatorState } from './state/PDFAnnotatorState';
+import { createPDFAnnotatorState } from './state';
 import { 
   setScale as _setScale,
   zoomIn as _zoomIn,
-  zoomOut as _zoomOut
+  zoomOut as _zoomOut,
+  scrollIntoView as _scrollIntoView
  } from './api';
 
 import './PDFAnnotator.css';
@@ -118,10 +119,7 @@ export const createPDFAnnotator = (
     undoStack.destroy();
   }
 
-  const scrollIntoView = (annotation: PDFAnnotation) => {
-    // TODO
-    return true;
-  }
+  const scrollIntoView = _scrollIntoView(viewer, viewerElement, store);
 
   const setFilter = (filter?: Filter) => {
     highlightRenderer.setFilter(filter);

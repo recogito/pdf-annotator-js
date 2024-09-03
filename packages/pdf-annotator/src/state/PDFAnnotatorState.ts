@@ -214,6 +214,12 @@ export const createPDFAnnotatorState = (
     emit(crosswalked);
   }, { origin: Origin.LOCAL });
 
+  innerStore.observe(event => {
+    // There is no need to crosswalk REMOTE annotations. We just
+    // need to forward them.
+    emit(event as StoreChangeEvent<PDFAnnotation>);
+  }, { origin: Origin.REMOTE });
+
   return {
     hover,
     selection,

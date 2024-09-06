@@ -37,12 +37,12 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "typescript": "^5.5.4",
-    "vite": "^5.4.2",
+    "vite": "^5.4.3",
     "vite-plugin-dts": "^4.1.0",
     "vite-tsconfig-paths": "^5.0.1"
   },
   "peerDependencies": {
-    "@annotorious/react": "^3.0.3",
+    "@annotorious/react": "^3.0.5",
     "@recogito/pdf-annotator": "1.0.0-rc.28",
     "pdfjs-dist": "4.6.82",
     "react": "16.8.0 || >=17.x || >=18.x",

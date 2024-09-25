@@ -1,7 +1,7 @@
 import type { PDFViewer } from 'pdfjs-dist/web/pdf_viewer.mjs';
 import { scrollIntoView as _scrollIntoView } from '@recogito/text-annotator';
-import { PDFAnnotation } from '../PDFAnnotation';
-import { PDFAnnotationStore } from '../state/PDFAnnotationStore';
+import type { PDFAnnotation } from '../PDFAnnotation';
+import type { PDFAnnotationStore } from '../state/PDFAnnotationStore';
 
 export const scrollIntoView = (
   viewer: PDFViewer,

@@ -1,24 +1,10 @@
-import { 
-  createPresencePainter,
-  createSpansRenderer,
-  fillDefaults,
-  HighlightStyleExpression,
-  SelectionHandler,
-  TextAnnotator, 
-  TextAnnotatorOptions
-} from '@recogito/text-annotator';
-import {  } from '@recogito/text-annotator';
-import { 
-  createBaseAnnotator, 
-  createLifecycleObserver, 
-  createUndoStack, 
-  Filter, 
-  PresenceProvider, 
-  User 
-} from '@annotorious/core';
+import { createPresencePainter, createSpansRenderer, fillDefaults, SelectionHandler } from '@recogito/text-annotator';
+import type { HighlightStyleExpression, TextAnnotator, TextAnnotatorOptions } from '@recogito/text-annotator';
+import { createBaseAnnotator, createLifecycleObserver, createUndoStack } from '@annotorious/core';
+import type { Filter, PresenceProvider, User } from '@annotorious/core';
 import { addResizeObserver } from './responsive';
 import type { PDFScale } from './PDFScale';
-import { PDFAnnotation } from './PDFAnnotation';
+import type { PDFAnnotation } from './PDFAnnotation';
 import { createPDFViewer } from './createPDFViewer';
 import { createPDFAnnotatorState } from './state';
 import { 

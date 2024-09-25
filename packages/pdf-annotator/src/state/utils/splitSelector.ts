@@ -1,4 +1,4 @@
-import { TextSelector } from '@recogito/text-annotator';
+import type { TextSelector } from '@recogito/text-annotator';
 
 export const isSamePage = (selector: TextSelector) => {
   const startPage = selector.range.startContainer.parentElement.closest('.page');

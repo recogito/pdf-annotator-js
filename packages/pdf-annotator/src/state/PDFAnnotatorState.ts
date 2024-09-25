@@ -1,8 +1,7 @@
 import * as pdfjsViewer from 'pdfjs-dist/legacy/web/pdf_viewer.mjs';
-import { 
-  createTextAnnotatorState, 
+import { createTextAnnotatorState, Origin } from '@recogito/text-annotator';
+import type { 
   HoverState, 
-  Origin, 
   SelectionState, 
   TextAnnotation, 
   TextAnnotationTarget, 
@@ -18,17 +17,17 @@ import type {
   ViewportState, 
   Update,
 } from '@annotorious/core';
-import { PDFAnnotation, PDFAnnotationTarget } from '../PDFAnnotation';
+import type { PDFAnnotation, PDFAnnotationTarget } from '../PDFAnnotation';
 import { getQuadPoints, reviveAnnotation, reviveTarget } from './utils';
-import { PDFAnnotationStore } from './PDFAnnotationStore';
+import type { PDFAnnotationStore } from './PDFAnnotationStore';
 import { createRenderedAnnotationsMap } from './renderedAnnotations';
 import { splitSelector } from './utils/splitSelector';
 
-export interface PDFAnnotatorState extends TextAnnotatorState<PDFAnnotation> {
+export interface PDFAnnotatorState extends TextAnnotatorState<PDFAnnotation, PDFAnnotation> {
 
   store: PDFAnnotationStore;
 
-  selection: SelectionState<PDFAnnotation>;
+  selection: SelectionState<PDFAnnotation, PDFAnnotation>;
 
   hover: HoverState<PDFAnnotation>;
 

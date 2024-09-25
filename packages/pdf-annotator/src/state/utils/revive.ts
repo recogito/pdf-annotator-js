@@ -1,5 +1,5 @@
-import { TextAnnotation, TextAnnotationTarget, TextSelector } from '@recogito/text-annotator';
-import { PDFAnnotation, PDFAnnotationTarget, PDFSelector } from '../../PDFAnnotation';
+import type { TextAnnotation, TextAnnotationTarget, TextSelector } from '@recogito/text-annotator';
+import type { PDFAnnotation, PDFAnnotationTarget, PDFSelector } from '../../PDFAnnotation';
 
 /**
  * Revives the given annotation target, if needed.

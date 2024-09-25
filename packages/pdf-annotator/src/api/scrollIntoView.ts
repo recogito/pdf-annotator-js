@@ -7,8 +7,17 @@ export const scrollIntoView = (
   viewer: PDFViewer,
   viewerElement: HTMLDivElement,
   store: PDFAnnotationStore
-) => (annotation: PDFAnnotation) => {
-  const p = annotation.target.selector[0].pageNumber;
+) => (annotationOrId: string | PDFAnnotation) => {
+  const id = 
+    typeof annotationOrId === 'string' ? annotationOrId : annotationOrId.id;
+  
+  const current = store.getAnnotation(id);
+  if (!current) {
+    console.warn('Cannot scroll to annotation', id);
+    return;
+  }
+
+  const p = current.target.selector[0].pageNumber;
   const page = document.querySelector(`.page[data-page-number="${p}"]`);
 
   setTimeout(() => {
@@ -16,7 +25,7 @@ export const scrollIntoView = (
     page?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }) ;
 
     // Then scroll to the annotation
-    const success = _scrollIntoView(viewerElement, store)(annotation);
+    const success = _scrollIntoView(viewerElement, store)(current);
 
     // If the jump wasn't successful, just jump to the page instead. 
     // The annotation wasn't rendered, but there is at least the (empty)
@@ -26,7 +35,7 @@ export const scrollIntoView = (
       const onTextLayerRendered =  ({ pageNumber }: { pageNumber: number }) => {
         if (pageNumber === p) {
           // Follow up scroll
-          setTimeout(() => _scrollIntoView(viewerElement, store)(annotation), 500);
+          setTimeout(() => _scrollIntoView(viewerElement, store)(current), 500);
 
           // Unregister this listener
           viewer.eventBus.off('textlayerrendered', onTextLayerRendered);

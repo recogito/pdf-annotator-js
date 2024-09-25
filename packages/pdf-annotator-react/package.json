@@ -1,6 +1,6 @@
 {
   "name": "@recogito/react-pdf-annotator",
-  "version": "1.0.0-rc.29",
+  "version": "1.0.0-rc.30",
   "description": "React bindings to the Recogito PDF annotator",
   "author": "Rainer Simon",
   "license": "BSD-3-Clause",
@@ -43,7 +43,7 @@
   },
   "peerDependencies": {
     "@annotorious/react": "^3.0.8",
-    "@recogito/pdf-annotator": "1.0.0-rc.29",
+    "@recogito/pdf-annotator": "1.0.0-rc.30",
     "pdfjs-dist": "4.6.82",
     "react": "16.8.0 || >=17.x || >=18.x",
     "react-dom": "16.8.0 || >=17.x || >=18.x"

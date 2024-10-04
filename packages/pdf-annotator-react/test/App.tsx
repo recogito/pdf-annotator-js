@@ -15,6 +15,11 @@ export const App = () => {
       anno.loadAnnotations('annotations.json');
   }, [anno]);
 
+  const onClick = (annotation: PDFAnnotation) => {
+    anno.setSelected(annotation.id);
+    anno.scrollIntoView(annotation);
+  }
+
   return (
     <>
       <PDFAnnotator 
@@ -26,7 +31,7 @@ export const App = () => {
 
       <ul className="annotation-list not-annotatable">
         {annotations.map(annotation => (
-          <li key={annotation.id} onClick={() => anno.scrollIntoView(annotation)}>
+          <li key={annotation.id} onClick={() => onClick(annotation)}>
             {annotation.target.selector[0].pageNumber} : {annotation.target.selector[0].quote}
           </li>
         ))}

@@ -43,13 +43,13 @@
     "vite-tsconfig-paths": "^5.0.1"
   },
   "peerDependencies": {
-    "@annotorious/react": "^3.0.9",
-    "@recogito/pdf-annotator": "1.0.0-rc.34",
     "pdfjs-dist": "4.6.82",
     "react": "16.8.0 || >=17.x || >=18.x",
     "react-dom": "16.8.0 || >=17.x || >=18.x"
   },
   "dependencies": {
+    "@annotorious/react": "^3.0.9",
+    "@recogito/pdf-annotator": "1.0.0-rc.34",
     "@floating-ui/react": "^0.26.24"
   }
 }

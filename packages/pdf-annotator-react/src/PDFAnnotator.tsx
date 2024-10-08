@@ -39,7 +39,7 @@ export const PDFAnnotator = (props: PDFAnnotatorProps) => {
 
         props.onRendered && props.onRendered();
       });
-  }, [setAnno]);
+  }, []);
 
   useEffect(() => {
     if (props.pageSize && anno)

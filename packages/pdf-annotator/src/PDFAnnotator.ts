@@ -65,7 +65,7 @@ export const createPDFAnnotator = (
   const selectionHandler = SelectionHandler(
     container.querySelector('.pdfViewer'), 
     state, 
-    opts
+    { ...opts, offsetReferenceSelector: '.page' }
   );
   selectionHandler.setUser(currentUser);
 

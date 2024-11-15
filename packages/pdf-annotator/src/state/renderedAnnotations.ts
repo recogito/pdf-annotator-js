@@ -33,8 +33,17 @@ export const createRenderedAnnotationsMap = () => {
     });      
   }
 
+  const deleteAnnotation = (annotation: PDFAnnotation) => {
+    const pages = annotation.target.selector.map((s: PDFSelector) => s.pageNumber);
+    pages.forEach(p => {
+      const current = rendered.get(p);
+      if (current)
+        rendered.set(p, current.filter(a => a.id !== annotation.id))
+    });
+  }
+
   const get = (page: number) => rendered.get(page);
 
-  return { get, upsert, updateTarget };
+  return { deleteAnnotation, get, upsert, updateTarget };
 
 }

@@ -149,7 +149,7 @@ export const createPDFAnnotatorState = (
   }
 
   // Callback method for when a new page gets rendered by PDF.js
-  const onLazyRender = (page: number) => {   
+  const onLazyRender = (page: number) => {  
     const pages = [page - 2, page - 1, page, page + 1, page + 2].filter(n => n >= 0);
     
     const toRender = pages.reduce<PDFAnnotation[]>((annotations, page) => (
@@ -200,6 +200,7 @@ export const createPDFAnnotatorState = (
     updated.forEach(u => innerStore.updateAnnotation(u.newValue, Origin.SILENT));
 
     const deleted: PDFAnnotation[] = (changes.deleted || []).map(toPDFAnnotation);
+    deleted.forEach(a => renderedAnnotations.deleteAnnotation(a));
 
     const crosswalked = {
       ...event,

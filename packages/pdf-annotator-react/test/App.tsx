@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useAnnotations, useAnnotator } from '@annotorious/react';
 import { PDFAnnotator } from '../src';
 import { PDFAnnotation, PDFAnnotator as VanillaPDFAnnotator } from '@recogito/pdf-annotator';
-import { TextAnnotatorPopup } from '@recogito/react-text-annotator';
+import { TextAnnotationPopup } from '@recogito/react-text-annotator';
 
 export const App = () => {
 
@@ -25,7 +25,7 @@ export const App = () => {
       <PDFAnnotator 
         pdfUrl="compressed.tracemonkey-pldi-09.pdf" />
 
-      <TextAnnotatorPopup popup={() => (
+      <TextAnnotationPopup popup={() => (
         <span>Hello World!</span>
       )} />
 

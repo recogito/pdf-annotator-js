@@ -106,7 +106,7 @@ export const createPDFAnnotator = (
 
   const scrollIntoView = _scrollIntoView(viewer, viewerElement, store);
 
-  const setFilter = (filter?: Filter) => {
+  const setFilter = (filter?: Filter<PDFAnnotation>) => {
     highlightRenderer.setFilter(filter);
     selectionHandler.setFilter(filter);
   }

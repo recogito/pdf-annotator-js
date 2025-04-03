@@ -34,13 +34,13 @@
     "./pdf-anntator.css": "./dist/pdf-annotator.css"
   },
   "devDependencies": {
-    "typescript": "5.7.2",
-    "vite": "^6.0.3",
-    "vite-plugin-dts": "^4.3.0"
+    "typescript": "5.8.2",
+    "vite": "^6.2.4",
+    "vite-plugin-dts": "^4.5.3"
   },
   "dependencies": {
-    "@annotorious/core": "^3.0.14",
-    "@recogito/text-annotator": "^3.0.0-rc.54",
+    "@annotorious/core": "^3.3.3",
+    "@recogito/text-annotator": "^3.0.0-rc.55",
     "pdfjs-dist": "4.9.155"
   }
 }

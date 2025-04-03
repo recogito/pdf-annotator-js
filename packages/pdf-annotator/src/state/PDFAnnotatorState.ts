@@ -129,7 +129,7 @@ export const createPDFAnnotatorState = (
     const revived = annotations.map(reviveAnnotation);
     revived.forEach(a => renderedAnnotations.upsert(a));
 
-    return innerStore.bulkAddAnnotation(revived, replace, origin) as PDFAnnotation[];
+    return innerStore.bulkAddAnnotations(revived, replace, origin) as PDFAnnotation[];
   }
 
   const updateAnnotation = (annotation: PDFAnnotation, origin = Origin.LOCAL) => {

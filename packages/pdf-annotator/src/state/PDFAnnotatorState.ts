@@ -121,7 +121,7 @@ export const createPDFAnnotatorState = (
     return success;
   }
 
-  const bulkAddAnnotation = (
+  const bulkAddAnnotations = (
     annotations: PDFAnnotation[], 
     replace: boolean,
     origin = Origin.LOCAL
@@ -227,7 +227,7 @@ export const createPDFAnnotatorState = (
     store: { 
       ...innerStore,
       addAnnotation,
-      bulkAddAnnotation,
+      bulkAddAnnotations,
       observe,
       onLazyRender,
       unobserve,

@@ -15,10 +15,11 @@ export default defineConfig({
     sourcemap: true,
     target: 'esnext',
     lib: {
-      entry: './src/index.ts',
-      name: 'PDFAnnotator',
+      entry: {
+        'index': './src/index.ts',
+        'w3c/index': './src/w3c/index.ts'
+      },
       formats: ['es'],
-      fileName: (format) => `pdf-annotator.${format}.js`
     },
     rollupOptions: {
       output: {

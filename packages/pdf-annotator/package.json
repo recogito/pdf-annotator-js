@@ -28,8 +28,11 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/pdf-annotator.es.js",
-      "require": "./dist/pdf-annotator.js"
+      "import": "./dist/index.js"
+    },
+    "./w3c": {
+      "types": "./dist/w3c/index.d.ts",
+      "import": "./dist/w3c/index.js"
     },
     "./pdf-anntator.css": "./dist/pdf-annotator.css"
   },

@@ -67,20 +67,23 @@ export const serializeW3CPDFAnnotation = <I extends PDFAnnotation = PDFAnnotatio
   const w3cTargets = selector.map(s => {
     const { id, quote, pageNumber, start, end, quadpoints } = s;
 
-    const viewrect = quadpointsToViewrect(quadpoints)
-
-    const w3cSelectors = [{
+    const w3cSelectors: any = [{
       type: 'TextQuoteSelector',
       exact: quote
     }, {
       type: 'TextPositionSelector',
       start,
       end
-    },{
-      type: 'FragmentSelector',
-      conformsTo: 'http://www.w3.org/TR/media-frags/',
-      value: `page=${pageNumber}&viewrect=${viewrect.join(',')}`
-    }];
+    }]
+    
+    if (quadpoints) {
+      const viewrect = quadpointsToViewrect(quadpoints);
+      w3cSelectors.push({
+        type: 'FragmentSelector',
+        conformsTo: 'http://www.w3.org/TR/media-frags/',
+        value: `page=${pageNumber}&viewrect=${viewrect.join(',')}`
+      });
+    }
 
     return {
       ...targetRest,

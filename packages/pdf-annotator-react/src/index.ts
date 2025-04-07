@@ -8,3 +8,7 @@ export type {
   PDFSelector,
   PDFScale
 } from '@recogito/pdf-annotator';
+
+export {
+  serializeW3CPDFAnnotation
+} from '@recogito/pdf-annotator'

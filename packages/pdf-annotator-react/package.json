@@ -32,10 +32,10 @@
     "./react-pdf-annotator.css": "./dist/react-pdf-annotator.css"
   },
   "devDependencies": {
-    "@recogito/react-text-annotator": "^3.0.0",
+    "@recogito/react-text-annotator": "^3.0.1",
     "@types/react-dom": "^18.3.6",
     "@vitejs/plugin-react": "^4.3.4",
-    "typescript": "^5.8.2",
+    "typescript": "^5.8.3",
     "vite": "^6.2.5",
     "vite-plugin-dts": "^4.5.3",
     "vite-tsconfig-paths": "^5.1.4"

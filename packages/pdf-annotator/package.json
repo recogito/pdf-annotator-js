@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@annotorious/core": "^3.3.3",
-    "@recogito/text-annotator": "^3.0.0",
+    "@recogito/text-annotator": "^3.0.1",
     "pdfjs-dist": "4.9.155"
   }
 }

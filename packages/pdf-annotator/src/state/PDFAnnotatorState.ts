@@ -44,7 +44,7 @@ export const createPDFAnnotatorState = (
   const renderedAnnotations = createRenderedAnnotationsMap();
 
   // The 'inner' text annotator
-  const { store: innerStore, selection, hover, viewport } = createTextAnnotatorState(viewerElement, opts.userSelectAction);
+  const { store: innerStore, selection, hover, viewport } = createTextAnnotatorState(viewerElement, opts);
 
   const observers: StoreObserver<PDFAnnotation>[] = [];
 

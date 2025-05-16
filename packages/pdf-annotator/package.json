@@ -38,12 +38,12 @@
   },
   "devDependencies": {
     "typescript": "5.8.3",
-    "vite": "^6.3.2",
-    "vite-plugin-dts": "^4.5.3"
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.4"
   },
   "dependencies": {
-    "@annotorious/core": "^3.3.4",
-    "@recogito/text-annotator": "^3.0.2",
+    "@annotorious/core": "^3.3.6",
+    "@recogito/text-annotator": "^3.0.3",
     "pdfjs-dist": "4.10.38"
   }
 }

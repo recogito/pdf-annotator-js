@@ -27,7 +27,6 @@ export default defineConfig(({ command, mode }) => ({
     rollupOptions: {
       external: [...Object.keys(packageJson.peerDependencies)],
       output: {
-        preserveModules: true,
         assetFileNames: 'react-pdf-annotator.[ext]'
       }
     },

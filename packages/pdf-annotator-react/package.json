@@ -43,7 +43,7 @@
   "peerDependencies": {
     "@annotorious/react": "^3.7.6",
     "@recogito/pdf-annotator": "1.1.0",
-    "pdfjs-dist": "4.10.38",
+    "pdfjs-dist": "5.4.149",
     "react": ">=18.x || >=19.x",
     "react-dom": ">=18.x || >=19.x"
   },

@@ -8,7 +8,7 @@ import './PDFAnnotator.css';
 
 export type PDFAnnotatorProps = TextAnnotatorOptions<PDFAnnotation, PDFAnnotation> & {
 
-  children?: ReactNode | JSX.Element;
+  children?: ReactNode;
 
   filter?: Filter;
 

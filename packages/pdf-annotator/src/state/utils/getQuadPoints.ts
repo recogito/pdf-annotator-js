@@ -4,7 +4,7 @@ interface Point { x: number, y: number };
 
 const clientPointToPDFPoint = (pt: Point, page: pdfjsViewer.PDFPageView, viewerElement: HTMLDivElement): Point => {
   // Points y is relative to viewerElement!
-  const { canvas } = page;
+  const canvas = page.canvas as HTMLCanvasElement;
 
   const viewerElementBounds = viewerElement.getBoundingClientRect();
   const canvasBounds = canvas.getBoundingClientRect();

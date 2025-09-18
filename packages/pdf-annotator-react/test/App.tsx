@@ -25,7 +25,9 @@ export const App = () => {
       <PDFAnnotator 
         pdfUrl="compressed.tracemonkey-pldi-09.pdf" />
 
-      <TextAnnotationPopup popup={() => (
+      <TextAnnotationPopup 
+        asPortal
+        popup={() => (
         <span>Hello World!</span>
       )} />
 

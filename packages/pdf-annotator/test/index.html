@@ -87,13 +87,18 @@
       
         var anno = await createPDFAnnotator(
           container, 
-          'compressed.tracemonkey-pldi-09.pdf');
+          'compressed.tracemonkey-pldi-09.pdf', {
+            style: {
+              fillOpacity: 0.35
+            },
+            mergeHighlights: { verticalTolerance: 5, horizontalTolerance: 20}
+          });
 
         anno.on('createAnnotation', a => console.log('create', a));
         anno.on('deleteAnnotation', a => console.log('delete', a));
         anno.on('updateAnnotation', (a, b) => console.log('update', a));
 
-        anno.loadAnnotations('annotations.json');
+        //  anno.loadAnnotations('annotations.json');
 
         document.getElementById('size-auto')
           .addEventListener('click', () => anno.setSize('auto'));

@@ -92,6 +92,40 @@ anno.zoomOut();
 
 The PDF annotator supports all the events of the [underlying text annotator instance](https://github.com/recogito/text-annotator-js#events).
 
+## Annotation Format
+
+The PDF annotator adds additional properties to the annotation target selector.
+
+```json
+{ 
+  "id": "cd18fb18-b0e9-44f4-a11d-39a35f830fb4",
+  "bodies": [],
+  "target": {
+    "selector": [{
+      "quote": "We present a trace-based compilation technique",
+      "start": 3589,
+      "end": 3635,
+      "pageNumber": 1,
+      "quadpoints": [
+        328.95,
+        276.11,
+        510.17,
+        276.11,
+        328.95,
+        286.55,
+        510.17,
+        286.55
+      ]
+    }],
+    "created": "2025-09-30T10:28:25.987Z",
+    "updated": "2025-09-30T10:28:27.561Z"
+  }
+}
+```
+
+* `pageNumber` - the PDF page number where the annotation is located.
+
+* `quadPoints` - the bounding box rectangle(s) of the annotation, in PDF [quadpoint format](https://pdfa.org/introducing-non-rectangular-links-to-pdf/).
 
 ## Annotation Styling
 

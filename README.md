@@ -125,7 +125,7 @@ The PDF annotator adds additional properties to the annotation target selector.
 
 * `pageNumber` - the PDF page number where the annotation is located.
 
-* `quadPoints` - the bounding box rectangle(s) of the annotation, in PDF [quadpoint format](https://pdfa.org/introducing-non-rectangular-links-to-pdf/).
+* `quadPoints` - the bounding box rectangle(s) of the annotation, in PDF [quadpoint format](https://www.adobe.com/devnet-docs/dcsdk_io/viewSDK/howtos_comments.html).
 
 ## Annotation Styling
 

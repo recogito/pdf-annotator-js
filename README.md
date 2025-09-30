@@ -10,7 +10,6 @@ A JavaScript library for PDF annotation, using [PDF.js](https://mozilla.github.i
 npm install @recogito/pdf-annotator
 ```
 
-
 ## Quick Start
 
 ```js
@@ -92,3 +91,27 @@ anno.zoomOut();
 ### Events
 
 The PDF annotator supports all the events of the [underlying text annotator instance](https://github.com/recogito/text-annotator-js#events).
+
+
+## Annotation Styling
+
+The PDF annotator supports the [same styling properties as the text annotator](https://github.com/recogito/text-annotator-js#annotation-styling).
+
+```js
+const anno = createPDFAnnotator(element, url, {
+  style: (annotation, state, z) => {
+    const hasTag = annotation.bodies.some(b => b.purpose === 'tagging');
+
+    return {
+      fill: hasTag ? '#ffeb3b' : '#bbdefb',
+      fillOpacity: state.hovered ? 0.35 : 0.2,
+      underlineColor: hasTag ? '#f57f17' : undefined,
+      underlineThickness: 1
+    }
+  }
+});
+```
+
+## License
+
+The Recogito Text Annotator is licensed under the [BSD 3-Clause](LICENSE) license. 

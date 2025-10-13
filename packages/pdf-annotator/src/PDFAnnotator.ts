@@ -1,4 +1,4 @@
-import { createPresencePainter, createSpansRenderer, fillDefaults, SelectionHandler } from '@recogito/text-annotator';
+import { createPresencePainter, createSelectionHandler, createSpansRenderer, fillDefaults } from '@recogito/text-annotator';
 import type { HighlightStyleExpression, TextAnnotator, TextAnnotatorOptions } from '@recogito/text-annotator';
 import { createBaseAnnotator, createLifecycleObserver, createUndoStack } from '@annotorious/core';
 import type { Filter, PresenceProvider, User } from '@annotorious/core';
@@ -17,7 +17,7 @@ import {
 import './PDFAnnotator.css';
 import '@recogito/text-annotator/dist/text-annotator.css';
 
-export interface PDFAnnotator extends TextAnnotator<PDFAnnotation, PDFAnnotation> {
+export interface PDFAnnotator extends Omit<TextAnnotator<PDFAnnotation, PDFAnnotation>, 'setAnnotatingEnabled' | 'redraw'> {
 
   element: HTMLElement;
 
@@ -62,7 +62,7 @@ export const createPDFAnnotator = (
   if (opts.style)
     highlightRenderer.setStyle(opts.style);
 
-  const selectionHandler = SelectionHandler(
+  const selectionHandler = createSelectionHandler(
     container.querySelector('.pdfViewer'), 
     state, 
     { ...opts, offsetReferenceSelector: '.page' }

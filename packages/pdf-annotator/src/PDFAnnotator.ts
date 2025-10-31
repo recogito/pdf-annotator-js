@@ -51,8 +51,7 @@ export const createPDFAnnotator = (
   const { store, viewport, selection } = state;
 
   const undoStack = createUndoStack<PDFAnnotation>(store);
-
-  // @ts-ignore
+  
   const lifecycle = createLifecycleObserver<PDFAnnotation, PDFAnnotation>(state, undoStack, opts.adapter);
 
   let currentUser: User = opts.user;
@@ -65,6 +64,7 @@ export const createPDFAnnotator = (
   const selectionHandler = createSelectionHandler(
     container.querySelector('.pdfViewer'), 
     state, 
+    lifecycle,
     { ...opts, offsetReferenceSelector: '.page' }
   );
   selectionHandler.setUser(currentUser);

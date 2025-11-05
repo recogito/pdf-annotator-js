@@ -1,4 +1,4 @@
-import type { PDFViewer } from 'pdfjs-dist/web/pdf_viewer.mjs';
+import type { PDFViewer } from 'pdfjs-dist/legacy/web/pdf_viewer.mjs';
 
 export const zoomIn = (viewer: PDFViewer) => (percentage?: number) => {
   const factor = viewer.currentScale + (percentage || 10) / 100;

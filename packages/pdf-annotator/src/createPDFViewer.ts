@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import * as pdfjsLib from 'pdfjs-dist';
+import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf.mjs';
 import * as pdfjsViewer from 'pdfjs-dist/legacy/web/pdf_viewer.mjs';
 
 import 'pdfjs-dist/legacy/web/pdf_viewer.css';

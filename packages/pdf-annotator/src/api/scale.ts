@@ -1,4 +1,4 @@
-import type { PDFViewer } from 'pdfjs-dist/web/pdf_viewer.mjs';
+import type { PDFViewer } from 'pdfjs-dist/legacy/web/pdf_viewer.mjs';
 import type { PDFScale } from '../PDFScale';
 
 // Zoom/scale-related Annotator API function implementations

@@ -25,9 +25,12 @@ export default defineConfig(({ command, mode }) => ({
       fileName: (format) => `react-pdf-annotator.${format}.js`
     },
     rollupOptions: {
-      external: [...Object.keys(packageJson.peerDependencies)],
+      external: [...Object.keys(packageJson.peerDependencies), 'react/jsx-runtime'],
       output: {
-        assetFileNames: 'react-pdf-annotator.[ext]'
+        assetFileNames: 'react-pdf-annotator.[ext]',
+        globals: {
+          'react/jsx-runtime': 'ReactJsxRuntime',
+        }
       }
     },
     sourcemap: true,

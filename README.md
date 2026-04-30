@@ -1,3 +1,7 @@
+> [!WARNING]  
+> This repository is deprecated. Active development of the PDF annotator continues in the
+> main [@recogito/text-annotator-js](https://github.com/recogito/text-annotator-js) monorepo.
+
 # Recogito PDF Annotator
 
 A JavaScript library for PDF annotation, using [PDF.js](https://mozilla.github.io/pdf.js/) and the [Recogito Text Annotator](https://github.com/recogito/text-annotator-js).
